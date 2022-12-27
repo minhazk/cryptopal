@@ -2,14 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import TagList from './TagList';
 
-const Sidebar = () => {
-    const CUT_OFF = 639;
-    const [burger, setBurger] = useState(window.innerWidth < CUT_OFF);
+const Sidebar = ({ burgerOpen, CUT_OFF }) => {
+    const [position, setPosition] = useState(window.innerWidth < CUT_OFF ? (!burgerOpen ? '-100%' : 0) : 'unset');
 
     useEffect(() => {
-        const resize = () => (window.innerWidth > CUT_OFF ? setBurger(false) : setBurger(true));
+        setPosition(window.innerWidth < CUT_OFF ? (!burgerOpen ? '-100%' : 0) : 'unset');
+    }, [burgerOpen]);
+
+    useEffect(() => {
+        const resize = () => setPosition(window.innerWidth > CUT_OFF ? 'unset' : '-100%');
         window.addEventListener('resize', resize);
-        return window.removeEventListener('resize', resize);
+        return () => window.removeEventListener('resize', resize);
     }, []);
 
     const dummyTags = [
@@ -20,8 +23,11 @@ const Sidebar = () => {
     ];
 
     return (
-        <sidebar className='resize-none w-48 mr-5 py-6 absolute md:relative -left-full md:left-0'>
-            <ul className='text-center text-sm font-medium flex flex-col gap-4'>
+        <div
+            className='resize-none w-52 md:w-48 mr-2 z-40 lg:mr-5 py-10 md:py-6 bg-primary md:bg-transparent text-white md:text-black rounded-r-lg px-4 absolute md:relative transition-[left] duration-500'
+            style={{ left: position }}
+        >
+            <ul className='text-center text-sm font-medium flex flex-col gap-6 md:gap-4'>
                 <li>
                     <Link to='/home'>Home</Link>
                 </li>
@@ -36,11 +42,11 @@ const Sidebar = () => {
                 </li>
             </ul>
 
-            <h3 className='font-semibold text-center my-8 mb-2'>Popular Tags</h3>
-            <div className='flex gap-2 flex-wrap'>
+            <h3 className='font-semibold text-center my-8 mb-4 md:mb-2'>Popular Tags</h3>
+            <div className='flex gap-3 md:gap-2 flex-wrap'>
                 <TagList tags={dummyTags} />
             </div>
-        </sidebar>
+        </div>
     );
 };
 

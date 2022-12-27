@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import ContentContainer from '../../components/ui/ContentContainer';
 import Header from '../../components/ui/Header';
+import Page from '../../components/ui/Page';
 import Sidebar from '../../components/ui/Sidebar';
 import SideProfile from '../../components/ui/SideProfile';
 import ThreadCard from '../../components/ui/ThreadCard';
@@ -91,23 +92,16 @@ const Thread = () => {
     const [comments, setComments] = useState(dummyComments);
 
     return (
-        <>
-            <Header />
-            <ContentContainer>
-                <Sidebar />
-                <div>
-                    <ThreadCard {...dummyThread} />
-                    <p className='font-semibold text-sm my-4'>Replies {`(${comments.length})`}</p>
-                    <div className='flex flex-col gap-3'>
-                        <CommentForm />
-                        {comments.map(comment => (
-                            <Comment key={comment.id} {...comment} />
-                        ))}
-                    </div>
-                </div>
-                <SideProfile />
-            </ContentContainer>
-        </>
+        <Page>
+            <ThreadCard {...dummyThread} />
+            <p className='font-semibold text-sm my-4'>Replies {`(${comments.length})`}</p>
+            <div className='flex flex-col gap-3'>
+                <CommentForm setComments={setComments} />
+                {comments.map(comment => (
+                    <Comment key={comment.id} {...comment} />
+                ))}
+            </div>
+        </Page>
     );
 };
 

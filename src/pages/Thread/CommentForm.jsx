@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Button from '../../components/ui/Button';
 
-const CommentForm = ({ autoFocus = false, setReplying }) => {
+const CommentForm = ({ autoFocus = false, setReplying, setComments }) => {
     const [value, setValue] = useState('');
 
     return (
