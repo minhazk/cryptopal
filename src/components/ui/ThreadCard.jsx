@@ -13,7 +13,7 @@ const ThreadCard = ({ id, tags, title, body, author, timestamp, gold, silver, br
                         e.preventDefault();
                         e.stopPropagation();
                     }}
-                    className='hover:shadow-sm z-10'
+                    className='hover:shadow-md focus:shadow-md'
                 >
                     <HiOutlineChevronUp size={25} />
                 </button>
@@ -22,20 +22,20 @@ const ThreadCard = ({ id, tags, title, body, author, timestamp, gold, silver, br
                         e.preventDefault();
                         e.stopPropagation();
                     }}
-                    className='hover:shadow-sm'
+                    className='hover:shadow-md focus:shadow-md'
                 >
                     <HiOutlineChevronDown size={25} />
                 </button>
             </div>
 
-            <div>
+            <div className='w-full'>
                 <div className='flex gap-2'>
                     <TagList tags={tags} />
                 </div>
                 <h3 className='text-primary font-semibold text-sm mt-3 mb-2'>{title}</h3>
                 <p className='text-xs'>{body}</p>
                 <p className='my-2'>
-                    <span className='text-accent font-medium text-xs'>{author}</span>
+                    <span className='text-accent font-semibold  text-xs'>{author}</span>
                     <span className='text-gray-300 font-light text-[11px] ml-2'>{formatTime(timestamp)}</span>
                 </p>
                 <div className='flex items-center gap-4'>

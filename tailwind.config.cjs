@@ -12,7 +12,7 @@ module.exports = {
             accent: '#775BE9',
             bronze: '#8D6161',
             silver: '#AAAAAA',
-            gold: '#FFB800 ',
+            gold: '#FFB800',
             background: '#EFF2F7',
         },
     },

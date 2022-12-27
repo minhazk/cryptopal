@@ -2,8 +2,11 @@ import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import ContentContainer from '../../components/ui/ContentContainer';
 import Header from '../../components/ui/Header';
+import Sidebar from '../../components/ui/Sidebar';
+import SideProfile from '../../components/ui/SideProfile';
 import ThreadCard from '../../components/ui/ThreadCard';
 import Comment from './Comment';
+import CommentForm from './CommentForm';
 
 const Thread = () => {
     const { id } = useParams();
@@ -30,7 +33,59 @@ const Thread = () => {
             silver: 2,
             gold: 7,
             bronze: 11,
-            children: [23, 34, 45],
+            childComments: [],
+        },
+        {
+            id: 76,
+            author: 'John Doe',
+            timestamp: Date.now(),
+            body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Vel quam elementum pulvinar.',
+            silver: 2,
+            gold: 7,
+            bronze: 11,
+            childComments: [
+                {
+                    id: 132,
+                    author: 'John Doe',
+                    timestamp: Date.now(),
+                    body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Vel quam elementum pulvinar.',
+                    silver: 2,
+                    gold: 7,
+                    bronze: 11,
+                    childComments: [
+                        {
+                            id: 12,
+                            author: 'John Doe',
+                            timestamp: Date.now(),
+                            body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Vel quam elementum pulvinar.',
+                            silver: 2,
+                            gold: 7,
+                            bronze: 11,
+                            childComments: [],
+                        },
+                    ],
+                },
+                {
+                    id: 132,
+                    author: 'John Doe',
+                    timestamp: Date.now(),
+                    body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Vel quam elementum pulvinar.',
+                    silver: 2,
+                    gold: 7,
+                    bronze: 11,
+                    childComments: [],
+                },
+            ],
+        },
+        {
+            id: 23,
+            author: 'John Doe',
+            timestamp: Date.now(),
+            body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Vel quam elementum pulvinar.',
+            silver: 2,
+            gold: 7,
+            bronze: 11,
+            childComments: [],
         },
     ];
     const [comments, setComments] = useState(dummyComments);
@@ -39,13 +94,18 @@ const Thread = () => {
         <>
             <Header />
             <ContentContainer>
-                <ThreadCard {...dummyThread} />
-                <p className='font-semibold text-sm my-4'>Replies</p>
+                <Sidebar />
                 <div>
-                    {comments.map(comment => (
-                        <Comment key={comment.id} {...comment} />
-                    ))}
+                    <ThreadCard {...dummyThread} />
+                    <p className='font-semibold text-sm my-4'>Replies {`(${comments.length})`}</p>
+                    <div className='flex flex-col gap-3'>
+                        <CommentForm />
+                        {comments.map(comment => (
+                            <Comment key={comment.id} {...comment} />
+                        ))}
+                    </div>
                 </div>
+                <SideProfile />
             </ContentContainer>
         </>
     );
