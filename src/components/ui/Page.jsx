@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import ContentContainer from './ContentContainer';
 import Header from './Header';
 import Sidebar from './Sidebar';
 import SideProfile from './SideProfile';
@@ -19,11 +18,11 @@ const Page = ({ children }) => {
     return (
         <>
             <Header setBurgerOpen={setBurgerOpen} burgerOpen={burgerOpen} profileOpen={profileOpen} setProfileOpen={setProfileOpen} />
-            <ContentContainer>
+            <div className='mx-auto px-5 pb-10 flex lg:max-w-[85%] xl:max-w-[1300px]'>
                 <Sidebar burgerOpen={burgerOpen} CUT_OFF={CUT_OFF} />
-                <div>{children}</div>
+                <div className='grow'>{children}</div>
                 <SideProfile profileOpen={profileOpen} CUT_OFF={CUT_OFF} />
-            </ContentContainer>
+            </div>
         </>
     );
 };

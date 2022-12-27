@@ -1,10 +1,6 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import ContentContainer from '../../components/ui/ContentContainer';
-import Header from '../../components/ui/Header';
 import Page from '../../components/ui/Page';
-import Sidebar from '../../components/ui/Sidebar';
-import SideProfile from '../../components/ui/SideProfile';
 import ThreadCard from '../../components/ui/ThreadCard';
 import Comment from './Comment';
 import CommentForm from './CommentForm';

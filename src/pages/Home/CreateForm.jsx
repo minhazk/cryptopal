@@ -11,10 +11,12 @@ const CreateForm = () => {
     return (
         <>
             <div className='bg-white shadow-sm shadow-gray-200 rounded relative'>
+                {value && <div className='text-[10px] bg-blue-300 text-primary font-bold w-fit py-[.75px] px-2 rounded absolute left-2 top-1/2 -translate-y-1/2'>title</div>}
                 <input
                     onChange={e => setValue(e.target.value)}
                     value={value}
                     className='w-full text-sm py-2 px-3 rounded outline-none transition-shadow duration-300 focus:shadow-[0_0_0_.175rem] focus:shadow-blue-300 focus:border-primary'
+                    style={{ paddingLeft: value ? '48px' : '12px' }}
                     placeholder='Ask something'
                 />
                 <button className='absolute right-2 top-1/2 -translate-y-1/2'>
@@ -37,7 +39,16 @@ const CreateForm = () => {
                                 <MdModeEditOutline size={18} />
                             </button>
                         </div>
-                        <div className='ml-auto'>
+                        <div className='ml-auto flex gap-2'>
+                            <button
+                                onClick={() => {
+                                    setValue('');
+                                    setTags([]);
+                                }}
+                                className='bg-gray-300 text-sm py-1 px-3 rounded'
+                            >
+                                Cancel
+                            </button>
                             <Button onClick={() => {}} label='Post'>
                                 Post
                             </Button>

@@ -45,16 +45,18 @@ const SideProfile = ({ profileOpen, CUT_OFF }) => {
 
     return (
         <div
-            className='flex flex-col items-center gap-3 w-52 md:w-56 ml-3 py-5 px-4 z-40 bg-white md:bg-transparent rounded-l-lg shadow-lg md:shadow-none absolute md:relative transition-[right] duration-500'
+            className='flex flex-col items-center gap-3 min-w-[unset] w-52 md:min-w-[11rem] xl:min-w-[13rem] py-5 px-4 z-40 bg-white md:bg-transparent rounded-l-lg shadow-lg md:shadow-none absolute md:relative transition-[right] duration-500'
             style={{ right: position }}
         >
             <div className='rounded-full w-28 aspect-square overflow-hidden'>
                 <img className='w-full h-full cover' src='https://source.unsplash.com/random/3' />
             </div>
-            <p className='text-lg text-primary font-semibold'>John Doe</p>
-            <div className='bg-[#E0DBF6] rounded-full py-[6px] px-3'>
-                <p className='text-accent font-semibold text-xs'>120 points</p>
-            </div>
+            <Link to={`/profile/${1}`} className='text-lg text-primary font-semibold hover:underline focus:underline'>
+                John Doe
+            </Link>
+            <Link to='/about' className='bg-[#E0DBF6] text-accent font-semibold text-xs rounded-full py-[6px] px-3 transition-colors hover:bg-accent focus:bg-accent hover:text-white focus:text-white'>
+                120 points
+            </Link>
             <div className='flex gap-2 mt-2'>
                 <TagList tags={dummyTags} />
             </div>
