@@ -3,7 +3,7 @@ import Header from './Header';
 import Sidebar from './Sidebar';
 import SideProfile from './SideProfile';
 
-const Page = ({ children }) => {
+const Page = ({ children, hideSideProfile }) => {
     const [burgerOpen, setBurgerOpen] = useState(false);
     const [profileOpen, setProfileOpen] = useState(false);
 
@@ -17,11 +17,11 @@ const Page = ({ children }) => {
 
     return (
         <>
-            <Header setBurgerOpen={setBurgerOpen} burgerOpen={burgerOpen} profileOpen={profileOpen} setProfileOpen={setProfileOpen} />
+            <Header setBurgerOpen={setBurgerOpen} burgerOpen={burgerOpen} profileOpen={profileOpen} setProfileOpen={setProfileOpen} hideSideProfile={hideSideProfile} />
             <div className='mx-auto px-5 pb-10 flex lg:max-w-[85%] xl:max-w-[1300px]'>
                 <Sidebar burgerOpen={burgerOpen} CUT_OFF={CUT_OFF} />
                 <div className='grow'>{children}</div>
-                <SideProfile profileOpen={profileOpen} CUT_OFF={CUT_OFF} />
+                {!hideSideProfile && <SideProfile profileOpen={profileOpen} CUT_OFF={CUT_OFF} />}
             </div>
         </>
     );

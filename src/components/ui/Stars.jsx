@@ -1,11 +1,14 @@
 import React from 'react';
 import { AiFillStar } from 'react-icons/ai';
+import { tierColours } from '../../utils/colours';
 
-const Stars = ({ num, tier }) => {
+const Stars = ({ num, tier, white }) => {
     return (
-        <div style={{ color: tier === 'gold' ? '#FFB800' : tier === 'silver' ? '#AAAAAA' : '#8D6161' }} className='flex gap-1 items-center'>
+        <div style={{ color: tierColours[tier] }} className='flex gap-1 items-center'>
             <AiFillStar />
-            <p className='text-black text-xs font-semibold'>{num}</p>
+            <p className='text-xs font-semibold' style={{ color: white ? 'white' : 'black' }}>
+                {num}
+            </p>
         </div>
     );
 };

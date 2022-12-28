@@ -5,7 +5,7 @@ import { AiOutlineMessage, AiOutlineUser } from 'react-icons/ai';
 import { CgClose } from 'react-icons/cg';
 import { Link } from 'react-router-dom';
 
-const Header = ({ setBurgerOpen, burgerOpen, profileOpen, setProfileOpen }) => {
+const Header = ({ setBurgerOpen, burgerOpen, profileOpen, setProfileOpen, hideSideProfile }) => {
     return (
         <header className='flex items-center px-5 lg:px-10 lg:max-w-[85%] mx-auto py-2 mb-4'>
             <button onClick={() => setBurgerOpen(prev => !prev)} className='md:hidden'>
@@ -20,7 +20,7 @@ const Header = ({ setBurgerOpen, burgerOpen, profileOpen, setProfileOpen }) => {
                     <Link to='/'>
                         <AiOutlineMessage className='md:hidden' />
                     </Link>
-                    <button onClick={() => setProfileOpen(prev => !prev)}>{!profileOpen ? <AiOutlineUser /> : <CgClose />}</button>
+                    <button onClick={() => !hideSideProfile && setProfileOpen(prev => !prev)}>{!profileOpen ? <AiOutlineUser /> : <CgClose />}</button>
                 </IconContext.Provider>
             </div>
         </header>

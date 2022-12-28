@@ -24,21 +24,33 @@ const SideProfile = ({ profileOpen, CUT_OFF }) => {
         {
             id: 123123,
             body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, Ipsum sit amet',
+            bronze: 2,
+            silver: 7,
+            gold: 11,
             parentId: 12,
         },
         {
             id: 2312,
             body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit,',
+            bronze: 2,
+            silver: 7,
+            gold: 11,
             parentId: 12,
         },
         {
             id: 323123,
             body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, Ipsum sit amet',
+            bronze: 2,
+            silver: 7,
+            gold: 11,
             parentId: 12,
         },
         {
             id: 4123,
             body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, Lorem ipsum dolor sit amet, consectetur adipiscing elit,',
+            bronze: 2,
+            silver: 7,
+            gold: 11,
             parentId: 12,
         },
     ];
@@ -49,7 +61,7 @@ const SideProfile = ({ profileOpen, CUT_OFF }) => {
             style={{ right: position }}
         >
             <div className='rounded-full w-28 aspect-square overflow-hidden'>
-                <img className='w-full h-full cover' src='https://source.unsplash.com/random/3' />
+                <img className='w-full h-full object-cover' src='https://source.unsplash.com/random/3' />
             </div>
             <Link to={`/profile/${1}`} className='text-lg text-primary font-semibold hover:underline focus:underline'>
                 John Doe
