@@ -2,8 +2,14 @@ import React, { useState } from 'react';
 import OverlayWrapper from './OverlayWrapper';
 import DmCard from './DmCard';
 import Chat from './Chat';
+import { IoMdClose } from 'react-icons/io';
+import { HiOutlineChevronUp, HiOutlineChevronDown } from 'react-icons/hi';
+import { FaRegWindowMinimize } from 'react-icons/fa';
+import { FiMaximize2 } from 'react-icons/fi';
 
 const MessagesOverlay = () => {
+    const [activeOverlay, setActiveOverlay] = useState(false);
+    const [minimizeChat, setMinimizeChat] = useState(true);
     const [activeChat, setActiveChat] = useState(null);
 
     const dummyChats = [
@@ -41,14 +47,31 @@ const MessagesOverlay = () => {
     ];
 
     return (
-        <div className='absolute bottom-0 right-[5%] flex gap-5'>
+        <div className='fixed bottom-0 right-[5%] flex gap-5 z-[50]'>
             {activeChat && (
-                <OverlayWrapper iconUrl={activeChat.imgUrl} title={activeChat.recipient}>
+                <OverlayWrapper
+                    iconUrl={activeChat.imgUrl}
+                    title={activeChat.recipient}
+                    activeOverlay={minimizeChat}
+                    action={
+                        <div className='flex items-center gap-2'>
+                            <button onClick={() => setMinimizeChat(prev => !prev)}>{minimizeChat ? <FaRegWindowMinimize /> : <FiMaximize2 size={20} />}</button>
+                            <button onClick={() => setActiveChat(null) && setMinimizeChat(false)}>
+                                <IoMdClose size={25} />
+                            </button>
+                        </div>
+                    }
+                >
                     <Chat chat={chat} />
                 </OverlayWrapper>
             )}
 
-            <OverlayWrapper iconUrl='https://source.unsplash.com/random/3' title='Messaging'>
+            <OverlayWrapper
+                iconUrl='https://source.unsplash.com/random/3'
+                title='Messaging'
+                activeOverlay={activeOverlay}
+                action={<button onClick={() => setActiveOverlay(prev => !prev)}>{!activeOverlay ? <HiOutlineChevronUp size={25} /> : <HiOutlineChevronDown size={25} />}</button>}
+            >
                 <div className='flex flex-col overflow-y-auto h-full'>
                     {dummyChats.map(chat => (
                         <DmCard key={chat.id} {...chat} setActiveChat={setActiveChat} />

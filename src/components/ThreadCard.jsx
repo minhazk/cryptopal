@@ -4,7 +4,7 @@ import { formatTime } from '../utils/TimeFormatter';
 import TagList from './TagList';
 import Stars from './ui/Stars';
 
-const ThreadCard = ({ id, tags, title, body, author, timestamp, gold, silver, bronze }) => {
+const ThreadCard = ({ id, tags, title, body, author, timestamp, gold, silver, bronze, short }) => {
     return (
         <div className='bg-white rounded shadow-sm px-3 py-4 flex gap-3'>
             <div className='flex flex-col gap-1 items-center pt-1'>
@@ -33,10 +33,16 @@ const ThreadCard = ({ id, tags, title, body, author, timestamp, gold, silver, br
                     <TagList tags={tags} />
                 </div>
                 <h3 className='text-primary font-semibold text-sm mt-3 mb-2'>{title}</h3>
-                <p className='text-xs'>{body}</p>
+                {short ? (
+                    <p className='text-xs text-ellipsis overflow-hidden' style={{ display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical' }}>
+                        {body}
+                    </p>
+                ) : (
+                    <p className='text-xs'>{body}</p>
+                )}
                 <p className='my-2'>
                     <span className='text-accent font-semibold  text-xs'>{author}</span>
-                    <span className='text-gray-300 font-light text-[11px] ml-2'>{formatTime(timestamp)}</span>
+                    <span className='text-gray-400 font-light text-[11px] ml-2'>{formatTime(timestamp)}</span>
                 </p>
                 <div className='flex items-center gap-4'>
                     <Stars num={gold} tier='gold' />

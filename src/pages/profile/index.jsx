@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Page from '../../components/ui/Page';
 import TagList from '../../components/TagList';
@@ -9,6 +9,7 @@ import StatCard from './StatCard';
 import { RiPencilFill } from 'react-icons/ri';
 import { AiOutlinePlus } from 'react-icons/ai';
 import UserIcon from '../../components/UserIcon';
+import TagPicker from '../../components/TagPicker';
 
 const Profile = () => {
     const dummyTags = [
@@ -86,6 +87,8 @@ const Profile = () => {
             userId: 12,
         },
     ];
+    const [tags, setTags] = useState(dummyTags);
+    const [isEditingTags, setIsEditingTags] = useState(false);
 
     return (
         <Page hideSideProfile>
@@ -113,10 +116,14 @@ const Profile = () => {
 
             <h2 className='mt-8 mb-3 font-medium lg:text-md'>Topics of interest</h2>
             <div className='flex gap-2'>
-                <TagList tags={dummyTags} />
-                <button className='border text-primary hover:bg-primary hover:text-white focus:bg-primary focus:text-white transition-colors border-primary aspect-square w-7 flex items-center justify-center rounded'>
+                <TagList tags={tags} />
+                <button
+                    onClick={() => setIsEditingTags(prev => !prev)}
+                    className='border text-primary hover:bg-primary hover:text-white focus:bg-primary focus:text-white transition-colors border-primary aspect-square w-7 flex items-center justify-center rounded'
+                >
                     <RiPencilFill size={20} />
                 </button>
+                {isEditingTags && <TagPicker selected={tags} setTags={setTags} closePopup={() => setIsEditingTags(false)} />}
             </div>
 
             <h2 className='mt-8 font-medium lg:text-md'>Recent Activity</h2>

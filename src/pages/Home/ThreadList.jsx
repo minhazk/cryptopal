@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import Tag from '../../components/ui/Tag';
+import React, { useEffect, useState } from 'react';
 import { RxGear } from 'react-icons/rx';
 import { BiSortAlt2 } from 'react-icons/bi';
 import ThreadCard from '../../components/ThreadCard';
 import { Link } from 'react-router-dom';
+import TagList from '../../components/TagList';
+import TagPicker from '../../components/TagPicker';
 
 const ThreadList = () => {
     const dummyTags = [
@@ -52,19 +53,24 @@ const ThreadList = () => {
     ];
     const [tags, setTags] = useState(dummyTags);
     const [threads, setThreads] = useState(dummyThreads);
+    const [isEditingTags, setIsEditingTags] = useState(false);
+
+    useEffect(() => {
+        setThreads(threads.filter(thread => thread.tags.some(tag => tags.some(t => t.id === tag.id))));
+    }, [tags]);
 
     return (
         <div className='mt-5'>
-            <div className='flex items-center gap-10'>
-                <div className='overflow-x-auto flex gap-2'>
-                    {tags.map(tag => (
-                        <Tag key={tag.id} {...tag} />
-                    ))}
-                    <button>
+            <div className='flex items-center gap-10 justify-between'>
+                <div className='flex-wrap items-center flex gap-2'>
+                    <span className='text-sm text-primary font-semibold'>Tags</span>
+                    <TagList tags={tags} />
+                    <button onClick={() => setIsEditingTags(prev => !prev)}>
                         <RxGear color='gray' />
                     </button>
+                    {isEditingTags && <TagPicker selected={tags} setTags={setTags} closePopup={() => setIsEditingTags(false)} />}
                 </div>
-                <div className='ml-auto'>
+                <div className=''>
                     <button className='flex items-center gap-1 px-2'>
                         <BiSortAlt2 color='gray' size={18} />
                         <p className='text-xs text-gray-400'>Sort</p>

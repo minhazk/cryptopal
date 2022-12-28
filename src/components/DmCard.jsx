@@ -9,7 +9,7 @@ const DmCard = ({ id, imgUrl, name, lastMessage, timestamp, setActiveChat }) => 
                 <UserIcon src={imgUrl} width='40px' />
             </div>
 
-            <div className='grow flex flex-col pr-2 border-b border-gray-200 pb-2'>
+            <div className='grow flex flex-col pr-2 border-b border-gray-300 pb-2'>
                 <div className='flex justify-between gap-2 items-center'>
                     <span className='text-primary text-sm font-medium'>{name}</span>
                     <span className='text-gray-400 text-[11px]'>{formatTime(timestamp)}</span>
