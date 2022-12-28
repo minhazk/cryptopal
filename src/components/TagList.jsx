@@ -1,5 +1,5 @@
 import React from 'react';
-import Tag from './Tag';
+import Tag from './ui/Tag';
 
 const TagList = ({ tags }) => {
     return (

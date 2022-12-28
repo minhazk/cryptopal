@@ -1,16 +1,23 @@
 import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Header from './Header';
+import MessagesOverlay from '../MessagesOverlay';
 import Sidebar from './Sidebar';
 import SideProfile from './SideProfile';
 
 const Page = ({ children, hideSideProfile }) => {
+    const CUT_OFF = 768;
+    const location = useLocation();
+    const navigate = useNavigate();
     const [burgerOpen, setBurgerOpen] = useState(false);
     const [profileOpen, setProfileOpen] = useState(false);
-
-    const CUT_OFF = 768;
+    const [showChatOverlap, setShowChatOverlay] = useState(window.innerWidth > CUT_OFF);
 
     useEffect(() => {
-        const resize = () => setBurgerOpen(false) && setProfileOpen(false);
+        const resize = () => {
+            if (window.innerWidth > CUT_OFF && location.pathname === '/messaging') navigate('/home');
+            setShowChatOverlay(window.innerWidth > CUT_OFF) && setBurgerOpen(false) && setProfileOpen(false);
+        };
         window.addEventListener('resize', resize);
         return () => window.removeEventListener('resize', resize);
     }, []);
@@ -23,6 +30,7 @@ const Page = ({ children, hideSideProfile }) => {
                 <div className='grow'>{children}</div>
                 {!hideSideProfile && <SideProfile profileOpen={profileOpen} CUT_OFF={CUT_OFF} />}
             </div>
+            {showChatOverlap && <MessagesOverlay />}
         </>
     );
 };

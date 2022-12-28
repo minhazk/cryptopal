@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { AiOutlinePlus } from 'react-icons/ai';
 import { MdModeEditOutline } from 'react-icons/md';
 import Button from '../../components/ui/Button';
-import TagList from '../../components/ui/TagList';
+import TagList from '../../components/TagList';
 
 const CreateForm = () => {
     const [value, setValue] = useState('');

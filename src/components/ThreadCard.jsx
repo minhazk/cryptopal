@@ -1,8 +1,8 @@
 import React from 'react';
 import { HiOutlineChevronUp, HiOutlineChevronDown } from 'react-icons/hi';
-import { formatTime } from '../../utils/TimeFormatter';
+import { formatTime } from '../utils/TimeFormatter';
 import TagList from './TagList';
-import Stars from './Stars';
+import Stars from './ui/Stars';
 
 const ThreadCard = ({ id, tags, title, body, author, timestamp, gold, silver, bronze }) => {
     return (

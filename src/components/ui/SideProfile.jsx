@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import TagList from './TagList';
+import TagList from '../TagList';
 import { BsArrowReturnRight } from 'react-icons/bs';
+import UserIcon from '../UserIcon';
 
 const SideProfile = ({ profileOpen, CUT_OFF }) => {
     const [position, setPosition] = useState(window.innerWidth < CUT_OFF ? (!profileOpen ? '-100%' : 0) : 'unset');
@@ -56,13 +57,11 @@ const SideProfile = ({ profileOpen, CUT_OFF }) => {
     ];
 
     return (
-        <div
+        <aside
             className='flex flex-col items-center gap-3 min-w-[unset] w-52 md:min-w-[11rem] xl:min-w-[13rem] py-5 px-4 z-40 bg-white md:bg-transparent rounded-l-lg shadow-lg md:shadow-none absolute md:relative transition-[right] duration-500'
             style={{ right: position }}
         >
-            <div className='rounded-full w-28 aspect-square overflow-hidden'>
-                <img className='w-full h-full object-cover' src='https://source.unsplash.com/random/3' />
-            </div>
+            <UserIcon src='https://source.unsplash.com/random/3' />
             <Link to={`/profile/${1}`} className='text-lg text-primary font-semibold hover:underline focus:underline'>
                 John Doe
             </Link>
@@ -75,7 +74,7 @@ const SideProfile = ({ profileOpen, CUT_OFF }) => {
             <h3 className='font-semibold text-center my-2 md:my-4 mb-2'>Recent Activity</h3>
             <div className='py-3 px-3 flex flex-col gap-2 rounded-md shadow-sm bg-[#E0DBF6] md:bg-white'>
                 {recentComments.map(comment => (
-                    <Link key={comment.id} to={`/thread/${comment.parentId}`} className='text-primary text-[11px] flex gap-2 '>
+                    <Link key={comment.id} to={`/thread/${comment.parentId}`} className='text-primary hover:underline text-[11px] flex gap-2 '>
                         <div className='flex items-center'>
                             <BsArrowReturnRight size={15} />
                         </div>
@@ -85,7 +84,7 @@ const SideProfile = ({ profileOpen, CUT_OFF }) => {
                     </Link>
                 ))}
             </div>
-        </div>
+        </aside>
     );
 };
 

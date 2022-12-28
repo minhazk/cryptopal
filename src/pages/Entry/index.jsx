@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import SignUpForm from './SignUpForm';
-import ThreadCard from '../../components/ui/ThreadCard';
+import ThreadCard from '../../components/ThreadCard';
 import SignInForm from './SignInForm';
 
 const Entry = () => {

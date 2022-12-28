@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Tag from '../../components/ui/Tag';
 import { RxGear } from 'react-icons/rx';
 import { BiSortAlt2 } from 'react-icons/bi';
-import ThreadCard from '../../components/ui/ThreadCard';
+import ThreadCard from '../../components/ThreadCard';
 import { Link } from 'react-router-dom';
 
 const ThreadList = () => {

@@ -1,12 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Page from '../../components/ui/Page';
-import TagList from '../../components/ui/TagList';
+import TagList from '../../components/TagList';
 import AchievementCard from './AchievementCard';
 import Carousel from './Carousel';
 import RecentCommentCard from './RecentCommentCard';
 import StatCard from './StatCard';
 import { RiPencilFill } from 'react-icons/ri';
+import { AiOutlinePlus } from 'react-icons/ai';
+import UserIcon from '../../components/UserIcon';
 
 const Profile = () => {
     const dummyTags = [
@@ -88,8 +90,8 @@ const Profile = () => {
     return (
         <Page hideSideProfile>
             <div className='grid grid-cols-[auto_1fr] md:grid-cols-[auto_auto_1fr] gap-x-4 md:gap-x-5 lg:gap-x-10 items-center'>
-                <div className='rounded-full w-28 aspect-square overflow-hidden ml-6'>
-                    <img className='w-full h-full object-cover' src='https://source.unsplash.com/random/3' />
+                <div className='ml-6'>
+                    <UserIcon src='https://source.unsplash.com/random/3' />
                 </div>
                 <div className='flex flex-col gap-3 py-2 px-5'>
                     <p to={`/profile/${1}`} className='text-lg text-primary font-semibold hover:underline focus:underline'>
@@ -126,9 +128,12 @@ const Profile = () => {
 
             <h2 className='font-medium lg:text-md'>Achievements</h2>
             <Carousel
-                cards={achievements.map(achievement => (
-                    <AchievementCard key={achievement.id} {...achievement} />
-                ))}
+                cards={[
+                    ...achievements.map(achievement => <AchievementCard key={achievement.id} {...achievement} />),
+                    <button className='border border-primary text-primary flex items-center justify-center rounded hover:opacity-60 transition-opacity'>
+                        <AiOutlinePlus size={65} />
+                    </button>,
+                ]}
             />
         </Page>
     );

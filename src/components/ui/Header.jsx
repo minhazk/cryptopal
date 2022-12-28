@@ -17,7 +17,7 @@ const Header = ({ setBurgerOpen, burgerOpen, profileOpen, setProfileOpen, hideSi
             <div className='ml-auto flex items-center gap-3'>
                 <p className='hidden md:block text-xs'>John Doe</p>
                 <IconContext.Provider value={{ size: '21px' }}>
-                    <Link to='/'>
+                    <Link to='/messaging'>
                         <AiOutlineMessage className='md:hidden' />
                     </Link>
                     <button onClick={() => !hideSideProfile && setProfileOpen(prev => !prev)}>{!profileOpen ? <AiOutlineUser /> : <CgClose />}</button>

@@ -5,7 +5,7 @@ import { HiOutlineChevronLeft, HiOutlineChevronRight } from 'react-icons/hi';
 const Carousel = ({ cards, options }) => {
     const OPTIONS = {
         gap: '1em',
-        cardsPerSlide: 1,
+        cardsPerSlide: 2,
         ...options,
     };
 
@@ -23,7 +23,7 @@ const Carousel = ({ cards, options }) => {
     };
 
     return (
-        <div className='overflow-x-hidden my-2 py-2 bg-black'>
+        <div className='overflow-x-hidden my-2 py-2 w-full max-w-[920px]'>
             <div
                 className='grid grid-flow-col transition-transform'
                 style={{

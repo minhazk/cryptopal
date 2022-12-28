@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Page from '../../components/ui/Page';
-import ThreadCard from '../../components/ui/ThreadCard';
+import ThreadCard from '../../components/ThreadCard';
 import Comment from './Comment';
 import CommentForm from './CommentForm';
 

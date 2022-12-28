@@ -7,7 +7,7 @@ const RecentCommentCard = ({ id, body, bronze, silver, gold, parentId }) => {
     const threadTitle = 'Thread title'; // call function to get title from parentId passed as prop
 
     return (
-        <div className='bg-white rounded py-5 px-4 flex flex-col gap-2 min-w-min'>
+        <div className='bg-white rounded py-5 px-4 flex flex-col gap-2 shadow'>
             <Link to={`/thread/${parentId}`} className='text-[12px] font-semibold'>
                 {threadTitle}
             </Link>
