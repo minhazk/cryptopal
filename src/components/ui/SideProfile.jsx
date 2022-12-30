@@ -3,8 +3,10 @@ import { Link } from 'react-router-dom';
 import TagList from '../TagList';
 import { BsArrowReturnRight } from 'react-icons/bs';
 import UserIcon from '../UserIcon';
+import { useUserContext } from '../../context/UserContext';
 
 const SideProfile = ({ profileOpen, CUT_OFF }) => {
+    const { user, userTags } = useUserContext();
     const [position, setPosition] = useState(window.innerWidth < CUT_OFF ? (!profileOpen ? '-100%' : 0) : 'unset');
 
     useEffect(() => {
@@ -17,10 +19,6 @@ const SideProfile = ({ profileOpen, CUT_OFF }) => {
         return () => window.removeEventListener('resize', resize);
     }, []);
 
-    const dummyTags = [
-        { id: 4123, label: 'BTC', color: '#FF7979' },
-        { id: 2213, label: 'ETH', color: '#28A1C7' },
-    ];
     const recentComments = [
         {
             id: 123123,
@@ -61,15 +59,15 @@ const SideProfile = ({ profileOpen, CUT_OFF }) => {
             className='flex flex-col items-center gap-3 min-w-[unset] w-52 md:min-w-[11rem] xl:min-w-[13rem] py-5 px-4 z-40 bg-white md:bg-transparent rounded-l-lg shadow-lg md:shadow-none absolute md:relative transition-[right] duration-500'
             style={{ right: position }}
         >
-            <UserIcon src='https://source.unsplash.com/random/3' />
-            <Link to={`/profile/${1}`} className='text-lg text-primary font-semibold hover:underline focus:underline'>
-                John Doe
+            <UserIcon src={user?.photoUrl} width='90px' />
+            <Link to={`/profile/${user?.id}`} className='text-md text-primary font-semibold hover:underline focus:underline'>
+                {user?.displayName}
             </Link>
             <Link to='/about' className='bg-[#E0DBF6] text-accent font-semibold text-xs rounded-full py-[6px] px-3 transition-colors hover:bg-accent focus:bg-accent hover:text-white focus:text-white'>
                 120 points
             </Link>
             <div className='flex gap-2 mt-2'>
-                <TagList tags={dummyTags} />
+                <TagList tags={userTags} />
             </div>
             <h3 className='font-semibold text-center my-2 md:my-4 mb-2'>Recent Activity</h3>
             <div className='py-3 px-3 flex flex-col gap-2 rounded-md shadow-sm bg-[#E0DBF6] md:bg-white'>

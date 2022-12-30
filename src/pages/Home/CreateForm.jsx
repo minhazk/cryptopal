@@ -3,20 +3,32 @@ import { AiOutlinePlus } from 'react-icons/ai';
 import { MdModeEditOutline } from 'react-icons/md';
 import Button from '../../components/ui/Button';
 import TagList from '../../components/TagList';
+import { useThreadContext } from '../../context/ThreadContext';
 
 const CreateForm = () => {
-    const [value, setValue] = useState('');
+    const [title, setTitle] = useState('');
+    const [body, setBody] = useState('');
     const [tags, setTags] = useState([]);
+
+    const { createThread } = useThreadContext();
+
+    const handleCreateThread = () => {
+        createThread(
+            title,
+            body,
+            tags.map(tag => tag.id)
+        );
+    };
 
     return (
         <>
             <div className='bg-white shadow-sm shadow-gray-200 rounded relative'>
-                {value && <div className='text-[10px] bg-blue-300 text-primary font-bold w-fit py-[.75px] px-2 rounded absolute left-2 top-1/2 -translate-y-1/2'>title</div>}
+                {title && <div className='text-[10px] bg-blue-300 text-primary font-bold w-fit py-[.75px] px-2 rounded absolute left-2 top-1/2 -translate-y-1/2'>title</div>}
                 <input
-                    onChange={e => setValue(e.target.value)}
-                    value={value}
+                    onChange={e => setTitle(e.target.value)}
+                    value={title}
                     className='w-full text-sm py-2 px-3 rounded outline-none transition-shadow duration-300 focus:shadow-[0_0_0_.175rem] focus:shadow-blue-300 focus:border-primary'
-                    style={{ paddingLeft: value ? '48px' : '12px' }}
+                    style={{ paddingLeft: title ? '48px' : '12px' }}
                     placeholder='Ask something'
                 />
                 <button className='absolute right-2 top-1/2 -translate-y-1/2'>
@@ -24,9 +36,11 @@ const CreateForm = () => {
                 </button>
             </div>
 
-            {value && (
+            {title && (
                 <div className='bg-white p-3 shadow-sm shadow-gray-200 rounded mt-3'>
                     <textarea
+                        value={body}
+                        onChange={e => setBody(e.target.value)}
                         className='text-sm w-full resize-x-none h-20 max-h-24 py-2 px-2 border border-gray-200 rounded outline-none transition-shadow duration-300 focus:shadow-[0_0_0_.175rem] focus:shadow-blue-300 focus:border-primary'
                         placeholder='Type here'
                     ></textarea>
@@ -49,7 +63,7 @@ const CreateForm = () => {
                             >
                                 Cancel
                             </button>
-                            <Button onClick={() => {}} label='Post'>
+                            <Button onClick={handleCreateThread} label='Post'>
                                 Post
                             </Button>
                         </div>

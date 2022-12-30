@@ -1,10 +1,19 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import SignUpForm from './SignUpForm';
 import ThreadCard from '../../components/ThreadCard';
 import SignInForm from './SignInForm';
+import { useUserContext } from '../../context/UserContext';
+import { useNavigate } from 'react-router-dom';
 
 const Entry = () => {
+    const { user } = useUserContext();
     const [signingUp, setSigningUp] = useState(true);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (user !== null) navigate('/home');
+    }, [user]);
+
     const dummyCards = [
         {
             id: 12321312,

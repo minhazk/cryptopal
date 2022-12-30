@@ -68,7 +68,7 @@ const ThreadList = () => {
                     <button onClick={() => setIsEditingTags(prev => !prev)}>
                         <RxGear color='gray' />
                     </button>
-                    {isEditingTags && <TagPicker selected={tags} setTags={setTags} closePopup={() => setIsEditingTags(false)} />}
+                    {isEditingTags && <TagPicker tags={tags} setTags={setTags} closePopup={() => setIsEditingTags(false)} />}
                 </div>
                 <div className=''>
                     <button className='flex items-center gap-1 px-2'>
@@ -80,7 +80,7 @@ const ThreadList = () => {
 
             <div className='flex flex-col gap-4 mt-4 py-2'>
                 {threads.map(thread => (
-                    <Link to={`/thread/${thread.id}`}>
+                    <Link key={thread.id} to={`/thread/${thread.id}`}>
                         <ThreadCard key={thread.id} {...thread} />
                     </Link>
                 ))}

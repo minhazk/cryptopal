@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useUserContext } from '../../context/UserContext';
 import TagList from '../TagList';
 
 const Sidebar = ({ burgerOpen, CUT_OFF }) => {
     const [position, setPosition] = useState(window.innerWidth < CUT_OFF ? (!burgerOpen ? '-100%' : 0) : 'unset');
+    const { logout, allTags } = useUserContext();
+    const navigate = useNavigate();
 
     useEffect(() => {
         setPosition(window.innerWidth < CUT_OFF ? (!burgerOpen ? '-100%' : 0) : 'unset');
@@ -14,13 +17,6 @@ const Sidebar = ({ burgerOpen, CUT_OFF }) => {
         window.addEventListener('resize', resize);
         return () => window.removeEventListener('resize', resize);
     }, []);
-
-    const dummyTags = [
-        { id: 1123, label: 'ADA', color: '#C339BE' },
-        { id: 2213, label: 'ETH', color: '#28A1C7' },
-        { id: 3123, label: 'USDT', color: '#775BE9' },
-        { id: 4123, label: 'BTC', color: '#FF7979' },
-    ];
 
     return (
         <aside
@@ -44,8 +40,17 @@ const Sidebar = ({ burgerOpen, CUT_OFF }) => {
 
             <h3 className='font-semibold text-center my-8 mb-4 md:mb-2'>Popular Tags</h3>
             <div className='flex gap-3 md:gap-2 flex-wrap'>
-                <TagList tags={dummyTags} />
+                <TagList tags={allTags} />
             </div>
+
+            <button
+                onClick={() => {
+                    logout();
+                    navigate('/');
+                }}
+            >
+                Log out
+            </button>
         </aside>
     );
 };

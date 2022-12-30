@@ -6,8 +6,10 @@ import { IoMdClose } from 'react-icons/io';
 import { HiOutlineChevronUp, HiOutlineChevronDown } from 'react-icons/hi';
 import { FaRegWindowMinimize } from 'react-icons/fa';
 import { FiMaximize2 } from 'react-icons/fi';
+import { useUserContext } from '../context/UserContext';
 
 const MessagesOverlay = () => {
+    const { user } = useUserContext();
     const [activeOverlay, setActiveOverlay] = useState(false);
     const [minimizeChat, setMinimizeChat] = useState(true);
     const [activeChat, setActiveChat] = useState(null);
@@ -67,7 +69,7 @@ const MessagesOverlay = () => {
             )}
 
             <OverlayWrapper
-                iconUrl='https://source.unsplash.com/random/3'
+                iconUrl={user?.photoUrl}
                 title='Messaging'
                 activeOverlay={activeOverlay}
                 action={<button onClick={() => setActiveOverlay(prev => !prev)}>{!activeOverlay ? <HiOutlineChevronUp size={25} /> : <HiOutlineChevronDown size={25} />}</button>}
