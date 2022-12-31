@@ -20,7 +20,7 @@ const Sidebar = ({ burgerOpen, CUT_OFF }) => {
 
     return (
         <aside
-            className='min-w-[unset] w-52 md:min-w-[10rem] lg:min-w-[11rem] mr-1 z-40 lg:mr-0 py-10 md:py-6 bg-primary md:bg-transparent text-white md:text-black rounded-r-lg px-4 lg:px-4 absolute md:relative transition-[left] duration-500'
+            className='min-w-[unset] w-[170px] md:min-w-[10rem] lg:min-w-[11rem] mr-1 z-40 lg:mr-0 py-10 md:py-6 bg-primary md:bg-transparent text-white md:text-black rounded-r-lg px-4 lg:px-4 absolute md:relative transition-[left] duration-500'
             style={{ left: position }}
         >
             <ul className='text-center text-sm font-medium flex flex-col gap-6 md:gap-4'>

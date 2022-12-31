@@ -1,26 +1,25 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Page from '../../components/ui/Page';
 import ThreadCard from '../../components/ThreadCard';
 import Comment from './Comment';
 import CommentForm from './CommentForm';
+import { useThreadContext } from '../../context/ThreadContext';
 
 const Thread = () => {
     const { id } = useParams();
-    const dummyThread = {
-        id: 12321312,
-        tags: [
-            { id: 4123, label: 'BTC', color: '#FF7979' },
-            { id: 2213, label: 'ETH', color: '#28A1C7' },
-        ],
-        title: 'Thread title',
-        body: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s...",
-        author: 'John Doe',
-        timestamp: Date.now(),
-        gold: 2,
-        silver: 7,
-        bronze: 11,
-    };
+    const { getThreadById, getThreadComments } = useThreadContext();
+    const [thread, setThread] = useState(null);
+    const [comments, setComments] = useState(null);
+
+    useEffect(() => {
+        (async () => {
+            setThread(await getThreadById(id));
+            setComments(await getThreadComments(id));
+        })();
+    }, []);
+
+    console.log(comments);
     const dummyComments = [
         {
             id: 12,
@@ -42,7 +41,7 @@ const Thread = () => {
             bronze: 11,
             childComments: [
                 {
-                    id: 132,
+                    id: 133122131322,
                     author: 'John Doe',
                     timestamp: Date.now(),
                     body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Vel quam elementum pulvinar.',
@@ -63,7 +62,7 @@ const Thread = () => {
                     ],
                 },
                 {
-                    id: 132,
+                    id: 1232,
                     author: 'John Doe',
                     timestamp: Date.now(),
                     body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Vel quam elementum pulvinar.',
@@ -85,17 +84,14 @@ const Thread = () => {
             childComments: [],
         },
     ];
-    const [comments, setComments] = useState(dummyComments);
 
     return (
         <Page>
-            <ThreadCard {...dummyThread} />
-            <p className='font-semibold text-sm my-4'>Replies {`(${comments.length})`}</p>
+            {thread && <ThreadCard {...thread} />}
+            <p className='font-semibold text-sm my-4'>Replies {comments !== null ? `(${comments.length})` : 0}</p>
             <div className='flex flex-col gap-3'>
-                <CommentForm setComments={setComments} />
-                {comments.map(comment => (
-                    <Comment key={comment.id} {...comment} />
-                ))}
+                <CommentForm setComments={setComments} parentThreadId={id} />
+                {/* {comments && comments.map(comment => <Comment key={comment.id} {...comment} parentThreadId={id} />)} */}
             </div>
         </Page>
     );

@@ -7,7 +7,7 @@ import Stars from '../../components/ui/Stars';
 import CommentList from './CommentList';
 import CommentForm from './CommentForm';
 
-const Comment = ({ id, author, timestamp, body, gold, silver, bronze, childComments }) => {
+const Comment = ({ id, author, timestamp, body, gold, silver, bronze, childComments, parentThreadId }) => {
     // const childComments = 'CALLA  FUNCTOIN HERE TO GET CHILD COMMENTS, FOR NOW ILL PASS THEM IN PROPS TO PREVENT INFINTEI LOOP';
     const [replying, setReplying] = useState(false);
 
@@ -59,7 +59,7 @@ const Comment = ({ id, author, timestamp, body, gold, silver, bronze, childComme
 
             {replying && (
                 <div className='mt-4'>
-                    <CommentForm autoFocus setReplying={setReplying} />
+                    <CommentForm autoFocus setReplying={setReplying} parentThreadId={id} parentCommentId={id} />
                 </div>
             )}
 

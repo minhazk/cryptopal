@@ -6,7 +6,7 @@ import Stars from './ui/Stars';
 
 const ThreadCard = ({ id, tags, title, body, author, timestamp, gold, silver, bronze, short }) => {
     return (
-        <div className='bg-white rounded shadow-sm px-3 py-4 flex gap-3'>
+        <div className='bg-white rounded shadow px-3 py-4 flex gap-3'>
             <div className='flex flex-col gap-1 items-center pt-1'>
                 <button
                     onClick={e => {
@@ -29,10 +29,12 @@ const ThreadCard = ({ id, tags, title, body, author, timestamp, gold, silver, br
             </div>
 
             <div className='w-full'>
-                <div className='flex gap-2'>
-                    <TagList tags={tags} />
-                </div>
-                <h3 className='text-primary font-semibold text-sm mt-3 mb-2'>{title}</h3>
+                {tags.length > 0 && (
+                    <div className='flex gap-2 mb-3'>
+                        <TagList tags={tags} />
+                    </div>
+                )}
+                <h3 className='text-primary font-semibold text-sm mb-2'>{title}</h3>
                 {short ? (
                     <p className='text-xs text-ellipsis overflow-hidden' style={{ display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical' }}>
                         {body}
