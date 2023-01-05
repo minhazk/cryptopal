@@ -11,7 +11,9 @@ const SignInForm = ({ setSigningUp }) => {
     const navigate = useNavigate();
 
     const handleSignIn = () => {
-        signInUser(email, password).then(() => navigate('/home'));
+        signInUser(email, password)
+            .then(() => navigate('/home'))
+            .catch(err => alert('There was an error logging in: ' + err));
     };
 
     return (
@@ -24,7 +26,7 @@ const SignInForm = ({ setSigningUp }) => {
                     <Button type='submit' label='Sign In' onClick={handleSignIn} />
                 </form>
                 <div className='border-t border-gray-300 w-full h-px my-2' />
-                <button onClick={() => signInWithGoogle()} className='bg-blue-600 text-white text-sm py-1 px-5 rounded'>
+                <button onClick={signInWithGoogle} className='bg-blue-600 text-white text-sm py-1 px-5 rounded'>
                     Continue with Google
                 </button>
                 <button onClick={() => setSigningUp(true)} className='text-xs text-primary text-center font-medium'>

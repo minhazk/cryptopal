@@ -22,6 +22,7 @@ const UserProvider = ({ children }) => {
                     email,
                     createdAt: user.metadata.createdAt,
                     photoURL: user.photoURL,
+                    points: 0,
                 });
             })
             .catch(() => alert('There was an error creating your account.'));
@@ -74,9 +75,18 @@ const UserProvider = ({ children }) => {
         return () =>
             auth.onAuthStateChanged(async authUser => {
                 if (authUser) {
-                    // query user id and set it
                     const docRef = doc(db, 'user', authUser.uid);
                     const docSnap = await getDoc(docRef);
+                    if (!docSnap.exists()) {
+                        await setDoc(doc(db, 'user', authUser.uid), {
+                            id: authUser.uid,
+                            displayName: authUser.displayName,
+                            email: authUser.email,
+                            createdAt: authUser.metadata.createdAt,
+                            photoURL: authUser.photoURL,
+                            points: 0,
+                        });
+                    }
                     const user = docSnap.data();
                     setUser({ id: user.id, displayName: user.displayName, email: user.email, photoUrl: user.photoURL });
                     getAllTags();

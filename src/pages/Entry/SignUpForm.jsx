@@ -9,12 +9,20 @@ const SignUpForm = ({ setSigningUp }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [rePassword, setRePassword] = useState('');
-    const { signUpUser } = useUserContext();
+    const { signUpUser, signInWithGoogle } = useUserContext();
     const navigate = useNavigate();
 
     const handleSignUp = () => {
         if (password !== rePassword) return alert('Passwords do not match!');
-        signUpUser(name, email, password).then(() => navigate('/home?signUp=true'));
+        signUpUser(name, email, password)
+            .then(() => navigate('/home?signUp=true'))
+            .catch(err => alert('There was an error creating your account: ' + err));
+    };
+
+    const handleSignIn = () => {
+        signInUser(email, password)
+            .then(() => navigate('/home'))
+            .catch(err => alert('There was an error logging in: ' + err));
     };
 
     return (
@@ -29,7 +37,9 @@ const SignUpForm = ({ setSigningUp }) => {
                     <Button type='submit' label='Create Account' onClick={handleSignUp} />
                 </form>
                 <div className='border-t border-gray-300 w-full h-px my-2' />
-                <button className='bg-blue-600 text-white text-sm py-1 px-5 rounded'>Continue with Google</button>
+                <button onClick={signInWithGoogle} className='bg-blue-600 text-white text-sm py-1 px-5 rounded'>
+                    Continue with Google
+                </button>
                 <button onClick={() => setSigningUp(false)} className='text-xs text-primary text-center font-medium'>
                     Already have an account? Sign in
                 </button>

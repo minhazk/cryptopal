@@ -22,7 +22,11 @@ function formatTime(time) {
         num = hours;
     }
 
-    return formatter.format(Math.round(-num), unit);
+    try {
+        return formatter.format(Math.round(-num), unit);
+    } catch (e) {
+        return 'Error retrieving time';
+    }
 }
 
 export { formatTime };
