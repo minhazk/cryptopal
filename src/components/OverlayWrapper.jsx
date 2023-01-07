@@ -1,5 +1,6 @@
 import React from 'react';
 import UserIcon from './UserIcon';
+import defaultIcon from '../assets/user-icon.svg';
 
 const OverlayWrapper = ({ children, title, iconUrl, action, activeOverlay }) => {
     return (
@@ -8,7 +9,7 @@ const OverlayWrapper = ({ children, title, iconUrl, action, activeOverlay }) => 
             style={{ transform: activeOverlay ? 'translateY(0)' : 'translateY(276px)' }}
         >
             <div className='flex items-center gap-2 py-[4px] px-2 bg-primary text-white font-bold'>
-                <UserIcon src={iconUrl} width='35px' />
+                <UserIcon src={iconUrl ?? defaultIcon} width='35px' />
                 <h2 className='grow font-medium text-sm'>{title}</h2>
                 {action}
             </div>

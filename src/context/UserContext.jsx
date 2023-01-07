@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { doc, getDoc, setDoc, getDocs, collection, query, documentId, where } from 'firebase/firestore';
@@ -10,6 +11,7 @@ const UserProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [userTags, setUserTags] = useState([]);
     const [allTags, setAllTags] = useState([]);
+    const navigate = useNavigate();
 
     const signUpUser = (displayName, email, password) =>
         createUserWithEmailAndPassword(auth, email, password)
@@ -32,8 +34,10 @@ const UserProvider = ({ children }) => {
     const signInWithGoogle = () => signInWithPopup(auth, new GoogleAuthProvider());
 
     const logout = () => {
-        auth.signOut();
-        setUser(null);
+        auth.signOut().then(() => {
+            setUser(null);
+            navigate('/');
+        });
     };
 
     const updateUserTags = async tags => {

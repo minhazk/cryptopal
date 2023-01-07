@@ -42,15 +42,6 @@ const Sidebar = ({ burgerOpen, CUT_OFF }) => {
             <div className='flex gap-3 md:gap-2 flex-wrap'>
                 <TagList tags={allTags} />
             </div>
-
-            <button
-                onClick={() => {
-                    logout();
-                    navigate('/');
-                }}
-            >
-                Log out
-            </button>
         </aside>
     );
 };

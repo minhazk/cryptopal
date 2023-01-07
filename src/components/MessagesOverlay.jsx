@@ -49,7 +49,7 @@ const MessagesOverlay = () => {
     ];
 
     return (
-        <div className='fixed bottom-0 right-[5%] flex gap-5 z-[50]'>
+        <div className='fixed bottom-0 right-[5%] flex gap-5 z-[50]' style={{ pointerEvents: activeChat ? 'auto' : 'none' }}>
             {activeChat && (
                 <OverlayWrapper
                     iconUrl={activeChat.imgUrl}
@@ -72,7 +72,11 @@ const MessagesOverlay = () => {
                 iconUrl={user?.photoUrl}
                 title='Messaging'
                 activeOverlay={activeOverlay}
-                action={<button onClick={() => setActiveOverlay(prev => !prev)}>{!activeOverlay ? <HiOutlineChevronUp size={25} /> : <HiOutlineChevronDown size={25} />}</button>}
+                action={
+                    <button style={{ pointerEvents: 'auto' }} onClick={() => setActiveOverlay(prev => !prev)}>
+                        {!activeOverlay ? <HiOutlineChevronUp size={25} /> : <HiOutlineChevronDown size={25} />}
+                    </button>
+                }
             >
                 <div className='flex flex-col overflow-y-auto h-full'>
                     {dummyChats.map(chat => (

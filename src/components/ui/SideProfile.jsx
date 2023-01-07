@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import TagList from '../TagList';
+import Button from './Button';
 import { BsArrowReturnRight } from 'react-icons/bs';
 import UserIcon from '../UserIcon';
 import { useUserContext } from '../../context/UserContext';
 
 const SideProfile = ({ profileOpen, CUT_OFF }) => {
-    const { user, userTags } = useUserContext();
+    const { user, logout, userTags } = useUserContext();
     const [position, setPosition] = useState(window.innerWidth < CUT_OFF ? (!profileOpen ? '-100%' : 0) : 'unset');
 
     useEffect(() => {
@@ -81,6 +82,10 @@ const SideProfile = ({ profileOpen, CUT_OFF }) => {
                         </p>
                     </Link>
                 ))}
+            </div>
+
+            <div className='mt-2'>
+                <Button label='Log out' onClick={logout} />
             </div>
         </aside>
     );
