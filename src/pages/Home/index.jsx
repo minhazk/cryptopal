@@ -1,13 +1,21 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import TagPicker from '../../components/TagPicker';
 import Page from '../../components/ui/Page';
+import { useThreadContext } from '../../context/ThreadContext';
 import CreateForm from './CreateForm';
 import ThreadList from './ThreadList';
 
 const Home = () => {
     const { search } = useLocation();
+    const { getAllThreads } = useThreadContext();
+    const [threads, setThreads] = useState([]);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        (async () => setThreads(await getAllThreads()))();
+    }, []);
+    console.log(threads);
 
     return (
         <Page>
@@ -20,8 +28,8 @@ const Home = () => {
                     closePopup={() => navigate('/home')}
                 />
             )}
-            <CreateForm />
-            <ThreadList />
+            <CreateForm setThreads={setThreads} />
+            <ThreadList threads={threads} />
         </Page>
     );
 };

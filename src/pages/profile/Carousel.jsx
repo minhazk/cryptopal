@@ -35,13 +35,13 @@ const Carousel = ({ cards, options }) => {
                 {cards}
             </div>
             <div className='flex items-center justify-center gap-2 my-4 text-primary'>
-                <button onClick={handlePrevPage} className='hover:shadow-md focus:shadow-md'>
+                <button onClick={handlePrevPage} className='hover:shadow-md'>
                     <HiOutlineChevronLeft size={20} />
                 </button>
                 {Array.from({ length: numOfSlides }).map((_n, i) => (
                     <PageDot key={i} active={-xOffset === i} setXOffset={setXOffset} pageNum={i} />
                 ))}
-                <button onClick={handleNextPage} className='hover:shadow-md focus:shadow-md'>
+                <button onClick={handleNextPage} className='hover:shadow-md'>
                     <HiOutlineChevronRight size={20} />
                 </button>
             </div>

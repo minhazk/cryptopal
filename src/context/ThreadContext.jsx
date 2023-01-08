@@ -9,7 +9,6 @@ const useThreadContext = () => useContext(ThreadContext);
 
 const ThreadProvider = ({ children }) => {
     const { user } = useUserContext();
-    const [allThreads, setAllThreads] = useState([]);
 
     async function createThread(title, body, tagIds) {
         const id = uuidv4();
@@ -24,7 +23,7 @@ const ThreadProvider = ({ children }) => {
             tagIds,
         };
         await setDoc(doc(db, 'thread', id), newThread);
-        setAllThreads(prev => [...prev, { id, ...newThread }]);
+        return { ...newThread, author: user.displayName, id };
     }
 
     async function getAuthor(id) {
@@ -54,7 +53,7 @@ const ThreadProvider = ({ children }) => {
             const { title, body, authorId, bronze, silver, gold, tagIds, timestamp } = doc.data();
             threads.push({ id: doc.id, title, body, bronze, silver, gold, ...(await getAuthor(authorId)), tags: await getTagsByIds(tagIds), timestamp: Number(timestamp.seconds) * 1000 });
         });
-        setAllThreads(threads);
+        return threads;
     }
 
     async function getThreadById(id) {
@@ -65,9 +64,7 @@ const ThreadProvider = ({ children }) => {
     }
 
     async function createComment(body, parentThreadId, parentCommentId) {
-        const id = uuidv4();
         const newComment = {
-            id,
             body,
             authorId: user.id,
             timestamp: new Date(),
@@ -77,7 +74,9 @@ const ThreadProvider = ({ children }) => {
             parentThreadId,
             parentCommentId,
         };
+        const id = uuidv4();
         await setDoc(doc(db, 'comment', id), newComment);
+        return { ...newComment, id };
     }
 
     async function getThreadComments(id) {
@@ -87,20 +86,13 @@ const ThreadProvider = ({ children }) => {
         const comments = [];
         querySnapshot.forEach(async doc => {
             const data = doc.data();
-            comments.push({ id: doc.id, ...data, timestamp: Number(data.timestamp.seconds) * 1000, ...(await getAuthor(data.authorId)) });
-            console.log(await getAuthor(data.authorId));
+            comments.push({ id: doc.id, ...data, timestamp: Number(data.timestamp.seconds) * 1000 });
+            comments[comments.length - 1] = { ...comments[comments.length - 1], ...(await getAuthor(data.authorId)) };
         });
-        console.log(comments);
         return comments;
     }
 
-    useEffect(() => {
-        (async () => {
-            await getAllThreads();
-        })();
-    }, []);
-
-    return <ThreadContext.Provider value={{ createThread, allThreads, getThreadById, createComment, getThreadComments }}>{children}</ThreadContext.Provider>;
+    return <ThreadContext.Provider value={{ createThread, getAllThreads, getThreadById, createComment, getThreadComments, getAuthor }}>{children}</ThreadContext.Provider>;
 };
 
 export { useThreadContext, ThreadProvider };

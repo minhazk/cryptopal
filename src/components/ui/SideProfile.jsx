@@ -65,11 +65,13 @@ const SideProfile = ({ profileOpen, CUT_OFF }) => {
                 {user?.displayName}
             </Link>
             <Link to='/about' className='bg-[#E0DBF6] text-accent font-semibold text-xs rounded-full py-[6px] px-3 transition-colors hover:bg-accent focus:bg-accent hover:text-white focus:text-white'>
-                120 points
+                {user?.points} points
             </Link>
-            <div className='flex gap-2 mt-2'>
-                <TagList tags={userTags} />
-            </div>
+            {userTags.length > 0 && (
+                <div className='flex gap-2 mt-2'>
+                    <TagList tags={userTags} />
+                </div>
+            )}
             <h3 className='font-semibold text-center my-2 md:my-4 mb-2'>Recent Activity</h3>
             <div className='py-3 px-3 flex flex-col gap-2 rounded-md shadow-sm bg-[#E0DBF6] md:bg-white'>
                 {recentComments.map(comment => (
@@ -84,7 +86,7 @@ const SideProfile = ({ profileOpen, CUT_OFF }) => {
                 ))}
             </div>
 
-            <div className='mt-2'>
+            <div className='mt-2 text-sm'>
                 <Button label='Log out' onClick={logout} />
             </div>
         </aside>

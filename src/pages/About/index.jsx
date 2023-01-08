@@ -1,6 +1,7 @@
 import React from 'react';
 import Page from '../../components/ui/Page';
 import Stars from '../../components/ui/Stars';
+import { useUserContext } from '../../context/UserContext';
 import RuleCard from './RuleCard';
 import TierCard from './TierCard';
 
@@ -23,7 +24,8 @@ const silverThreshold = 500;
 const goldThreshold = 1000;
 
 const About = () => {
-    const userPoints = 120;
+    const { user } = useUserContext();
+    const userPoints = user?.points ?? 0;
 
     return (
         <Page>

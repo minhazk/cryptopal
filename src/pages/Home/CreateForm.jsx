@@ -5,7 +5,7 @@ import Button from '../../components/ui/Button';
 import TagList from '../../components/TagList';
 import { useThreadContext } from '../../context/ThreadContext';
 
-const CreateForm = () => {
+const CreateForm = ({ setThreads }) => {
     const [title, setTitle] = useState('');
     const [body, setBody] = useState('');
     const [tags, setTags] = useState([]);
@@ -14,12 +14,19 @@ const CreateForm = () => {
     const { createThread } = useThreadContext();
 
     const handleCreateThread = () => {
-        createThread(title, body, tags.map(tag => tag.id) || []).then(() => {
-            setTitle('');
-            setBody('');
-            setTags([]);
-        });
+        createThread(title, body, tags.map(tag => tag.id) || [])
+            .then(thread => createLocalThread(thread))
+            .then(() => {
+                setTitle('');
+                setBody('');
+                setTags([]);
+            })
+            .catch(() => alert('There was an error creating your thread'));
     };
+
+    function createLocalThread(thread) {
+        setThreads(prev => [...prev, thread]);
+    }
 
     return (
         <>

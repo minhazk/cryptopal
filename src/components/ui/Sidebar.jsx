@@ -5,7 +5,7 @@ import TagList from '../TagList';
 
 const Sidebar = ({ burgerOpen, CUT_OFF }) => {
     const [position, setPosition] = useState(window.innerWidth < CUT_OFF ? (!burgerOpen ? '-100%' : 0) : 'unset');
-    const { logout, allTags } = useUserContext();
+    const { tags } = useUserContext();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -40,7 +40,7 @@ const Sidebar = ({ burgerOpen, CUT_OFF }) => {
 
             <h3 className='font-semibold text-center my-8 mb-4 md:mb-2'>Popular Tags</h3>
             <div className='flex gap-3 md:gap-2 flex-wrap'>
-                <TagList tags={allTags} />
+                <TagList tags={tags} />
             </div>
         </aside>
     );

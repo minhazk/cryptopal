@@ -15,7 +15,7 @@ const UserProvider = ({ children }) => {
 
     const signUpUser = (displayName, email, password) =>
         createUserWithEmailAndPassword(auth, email, password)
-            .then(() => updateProfile(getAuth().currentUser, { displayName }))
+            // .then(() => updateProfile(getAuth().currentUser, { displayName }))
             .then(() => {
                 const user = getAuth().currentUser;
                 setDoc(doc(db, 'user', user.uid), {
@@ -31,7 +31,7 @@ const UserProvider = ({ children }) => {
 
     const signInUser = (email, password) => signInWithEmailAndPassword(auth, email, password);
 
-    const signInWithGoogle = () => signInWithPopup(auth, new GoogleAuthProvider());
+    const signInWithGoogle = () => signInWithPopup(auth, new GoogleAuthProvider()).then(() => navigate('/home'));
 
     const logout = () => {
         auth.signOut().then(() => {
@@ -75,6 +75,12 @@ const UserProvider = ({ children }) => {
         setUserTags(tags);
     }
 
+    async function getUserById(id) {
+        const docRef = doc(db, 'user', id);
+        const docSnap = await getDoc(docRef);
+        return docSnap.exists() ? docSnap.data() : null;
+    }
+
     useEffect(() => {
         return () =>
             auth.onAuthStateChanged(async authUser => {
@@ -92,7 +98,7 @@ const UserProvider = ({ children }) => {
                         });
                     }
                     const user = docSnap.data();
-                    setUser({ id: user.id, displayName: user.displayName, email: user.email, photoUrl: user.photoURL });
+                    setUser({ id: user.id, displayName: user.displayName, email: user.email, photoUrl: user.photoURL, points: user.points });
                     getAllTags();
                 }
             });
@@ -103,7 +109,7 @@ const UserProvider = ({ children }) => {
         getUserTags();
     }, [user]);
 
-    return <UserContext.Provider value={{ user, userTags, signUpUser, signInUser, signInWithGoogle, logout, updateUserTags, allTags, userPoints: 0 }}>{children}</UserContext.Provider>;
+    return <UserContext.Provider value={{ user, userTags, signUpUser, signInUser, signInWithGoogle, logout, updateUserTags, tags: allTags, getUserById }}>{children}</UserContext.Provider>;
 };
 
 export { useUserContext, UserProvider };

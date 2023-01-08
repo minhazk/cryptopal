@@ -7,9 +7,7 @@ import TagList from '../../components/TagList';
 import TagPicker from '../../components/TagPicker';
 import { useThreadContext } from '../../context/ThreadContext';
 
-const ThreadList = () => {
-    const { allThreads } = useThreadContext();
-    console.log(allThreads);
+const ThreadList = ({ threads }) => {
     const [tags, setTags] = useState([]);
     const [isEditingTags, setIsEditingTags] = useState(false);
 
@@ -41,9 +39,9 @@ const ThreadList = () => {
             </div>
 
             <div className='flex flex-col gap-4 mt-4 py-2'>
-                {allThreads.map(thread => (
+                {threads.map(thread => (
                     <Link key={thread.id} to={`/thread/${thread.id}`}>
-                        <ThreadCard key={thread.id} {...thread} />
+                        <ThreadCard key={thread.id} {...thread} short />
                     </Link>
                 ))}
             </div>

@@ -47,7 +47,7 @@ const Messaging = () => {
             timestamp: new Date(),
         },
     ];
-    console.log(window.innerHeight);
+
     return (
         <Page>
             {!activeChat ? (
