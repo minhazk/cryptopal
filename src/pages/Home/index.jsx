@@ -13,7 +13,7 @@ const Home = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        (async () => setThreads(await getAllThreads()))();
+        getAllThreads().then(setThreads);
     }, []);
     console.log(threads);
 

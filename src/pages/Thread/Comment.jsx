@@ -13,13 +13,17 @@ import { useUserContext } from '../../context/UserContext';
 const Comment = ({ id, authorId, timestamp, body, gold, silver, bronze, parentThreadId, groupedComments, setComments }) => {
     const [replying, setReplying] = useState(false);
     const { user } = useUserContext();
-    const { getAuthor } = useThreadContext();
+    const { getAuthor, deleteComment } = useThreadContext();
     const [author, setAuthor] = useState(null);
     const childComments = groupedComments[id];
 
     useEffect(() => {
         (async () => setAuthor((await getAuthor(authorId)).author))();
     }, [author]);
+
+    function handleDeleteComment() {
+        deleteComment(id).then(id => setComments(prev => prev.filter(comment => comment.id != id)));
+    }
 
     return (
         <div>
@@ -69,7 +73,7 @@ const Comment = ({ id, authorId, timestamp, body, gold, silver, bronze, parentTh
                                     Edit
                                     <RiEdit2Line size={14} />
                                 </button>
-                                <button onClick={() => {}} className='flex items-center gap-2 hover:text-red-500 focus:text-red-500 py-1 rounded-full'>
+                                <button onClick={handleDeleteComment} className='flex items-center gap-2 hover:text-red-500 focus:text-red-500 py-1 rounded-full'>
                                     Delete
                                     <FiTrash size={12} />
                                 </button>

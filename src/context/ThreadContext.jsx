@@ -1,8 +1,8 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext } from 'react';
 import { useUserContext } from './UserContext';
 import { v4 as uuidv4 } from 'uuid';
 import { db } from '../firebase';
-import { doc, setDoc, getDoc, query, collection, getDocs, where, documentId } from 'firebase/firestore';
+import { doc, setDoc, getDoc, query, collection, getDocs, where, documentId, deleteDoc } from 'firebase/firestore';
 
 const ThreadContext = createContext({});
 const useThreadContext = () => useContext(ThreadContext);
@@ -92,7 +92,26 @@ const ThreadProvider = ({ children }) => {
         return comments;
     }
 
-    return <ThreadContext.Provider value={{ createThread, getAllThreads, getThreadById, createComment, getThreadComments, getAuthor }}>{children}</ThreadContext.Provider>;
+    async function deleteComment(id) {
+        const itemsRef = collection(db, 'comment');
+        const q = query(itemsRef, where('parentCommentId', '==', id));
+        const querySnapshot = await getDocs(q);
+        const childComments = [];
+        querySnapshot.forEach(doc => {
+            childComments.push(doc.id);
+        });
+        for (const id of childComments) {
+            await deleteDoc(doc(db, 'comment', id));
+        }
+        await deleteDoc(doc(db, 'comment', id));
+        return id;
+    }
+
+    async function deleteThread(id) {
+        await deleteDoc(doc(db, 'thread', id));
+    }
+
+    return <ThreadContext.Provider value={{ createThread, getAllThreads, getThreadById, createComment, getThreadComments, getAuthor, deleteComment, deleteThread }}>{children}</ThreadContext.Provider>;
 };
 
 export { useThreadContext, ThreadProvider };

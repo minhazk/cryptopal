@@ -1,11 +1,25 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { HiOutlineChevronUp, HiOutlineChevronDown } from 'react-icons/hi';
+import { FiTrash } from 'react-icons/fi';
+import { RiEdit2Line } from 'react-icons/ri';
 import { formatTime } from '../utils/TimeFormatter';
 import TagList from './TagList';
 import Stars from './ui/Stars';
+import { useUserContext } from '../context/UserContext';
+import { useThreadContext } from '../context/ThreadContext';
 
 const ThreadCard = ({ id, tags, title, body, author, authorId, timestamp, gold, silver, bronze, short }) => {
+    const { user } = useUserContext();
+    const { deleteThread } = useThreadContext();
+    const navigate = useNavigate();
+
+    function handleDeleteThread() {
+        deleteThread(id)
+            .then(() => navigate('/home'))
+            .catch(err => alert('Error deleting thread: ' + err));
+    }
+
     return (
         <div className='bg-white rounded shadow px-3 py-4 flex gap-3'>
             <div className='flex flex-col gap-1 items-center pt-1'>
@@ -54,6 +68,18 @@ const ThreadCard = ({ id, tags, title, body, author, authorId, timestamp, gold, 
                     <Stars num={silver} tier='silver' />
                     <Stars num={bronze} tier='bronze' />
                 </div>
+                {!short && authorId === user?.id && (
+                    <div className='flex gap-2 items-center text-xs mt-3'>
+                        <button className='flex gap-2 items-center hover:text-primary'>
+                            Edit
+                            <RiEdit2Line />
+                        </button>
+                        <button onClick={handleDeleteThread} className='flex gap-2 items-center hover:text-red-500'>
+                            Delete
+                            <FiTrash />
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     );
