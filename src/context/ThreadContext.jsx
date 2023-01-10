@@ -87,9 +87,17 @@ const ThreadProvider = ({ children }) => {
         querySnapshot.forEach(async doc => {
             const data = doc.data();
             comments.push({ id: doc.id, ...data, timestamp: Number(data.timestamp.seconds) * 1000 });
-            comments[comments.length - 1] = { ...comments[comments.length - 1], ...(await getAuthor(data.authorId)) };
+            comments[comments.length - 1] = { ...comments[comments.length - 1], ...(await getAuthor(data.authorId)), vote: await getUserVote(doc.id, 'comment') };
         });
         return comments;
+    }
+
+    async function getUserVote(postId, type) {
+        const itemsRef = collection(db, `${type}_vote`);
+        const q = query(itemsRef, where(`${type}_id`, '==', postId), where('user_id', '==', user?.id));
+        const querySnapshot = await getDocs(q);
+        if (querySnapshot.empty) return null;
+        return querySnapshot.docs[0].data().vote;
     }
 
     async function deleteComment(id) {
@@ -151,11 +159,17 @@ const ThreadProvider = ({ children }) => {
             [userRank]: alteration,
         });
 
-        return { postId, userRank, alteration };
+        return { postId, userRank, alteration, vote: variationType };
+    }
+
+    async function updatePost(id, type, body) {
+        const docRef = doc(db, type, id);
+        await updateDoc(docRef, { body });
+        return { id, body };
     }
 
     return (
-        <ThreadContext.Provider value={{ createThread, getAllThreads, getThreadById, createComment, getThreadComments, getAuthor, deleteComment, deleteThread, handleVote }}>
+        <ThreadContext.Provider value={{ createThread, getAllThreads, getThreadById, createComment, getThreadComments, getAuthor, deleteComment, deleteThread, handleVote, updatePost }}>
             {children}
         </ThreadContext.Provider>
     );

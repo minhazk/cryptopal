@@ -2,13 +2,14 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Page from '../../components/ui/Page';
 import ThreadCard from '../../components/ThreadCard';
-import Comment from './Comment';
 import CommentForm from './CommentForm';
 import { useThreadContext } from '../../context/ThreadContext';
 import CommentList from './CommentList';
+import { useUserContext } from '../../context/UserContext';
 
 const Thread = () => {
     const { id } = useParams();
+    const { user } = useUserContext();
     const { getThreadById, getThreadComments } = useThreadContext();
     const [thread, setThread] = useState(null);
     const [comments, setComments] = useState(null);
@@ -25,11 +26,13 @@ const Thread = () => {
     const rootComments = groupedComments[null];
 
     useEffect(() => {
-        (async () => {
-            setThread(await getThreadById(id));
-            setComments(await getThreadComments(id));
-        })();
+        getThreadById(id).then(setThread);
     }, []);
+
+    useEffect(() => {
+        if (user === null) return;
+        getThreadComments(id).then(setComments);
+    }, [user]);
 
     return (
         <Page>

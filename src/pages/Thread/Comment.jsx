@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { HiOutlineChevronUp, HiOutlineChevronDown, HiOutlineReply } from 'react-icons/hi';
 import { FiTrash } from 'react-icons/fi';
@@ -9,16 +9,20 @@ import CommentList from './CommentList';
 import CommentForm from './CommentForm';
 import { useThreadContext } from '../../context/ThreadContext';
 import { useUserContext } from '../../context/UserContext';
+import { tierColours } from '../../utils/colours';
 
-const Comment = ({ id, authorId, timestamp, body, gold, silver, bronze, parentThreadId, groupedComments, setComments }) => {
+const Comment = ({ id, authorId, timestamp, body, gold, silver, bronze, parentThreadId, vote, groupedComments, setComments }) => {
     const [replying, setReplying] = useState(false);
+    const [editingComment, setEditingComment] = useState(false);
     const { user } = useUserContext();
-    const { getAuthor, deleteComment, handleVote } = useThreadContext();
+    const { getAuthor, deleteComment, handleVote, updatePost } = useThreadContext();
     const [author, setAuthor] = useState(null);
     const childComments = groupedComments[id];
 
+    const bodyRef = useRef();
+
     useEffect(() => {
-        (async () => setAuthor((await getAuthor(authorId)).author))();
+        getAuthor(authorId).then(authorData => setAuthor(authorData.author));
     }, [author]);
 
     function handleDeleteComment() {
@@ -26,15 +30,31 @@ const Comment = ({ id, authorId, timestamp, body, gold, silver, bronze, parentTh
     }
 
     function handleCommentVote(variation) {
-        handleVote(id, 'comment', variation).then(({ postId, userRank, alteration }) => {
+        handleVote(id, 'comment', variation).then(({ postId, userRank, alteration, vote }) => {
             setComments(prev =>
                 prev.map(comment => {
                     if (comment.id !== postId) return comment;
                     comment[userRank] = alteration;
+                    comment.vote = vote;
                     return comment;
                 })
             );
         });
+    }
+
+    function handleUpdateComment() {
+        updatePost(id, 'comment', bodyRef.current.value)
+            .then(({ id, body }) => {
+                setComments(prev =>
+                    prev.map(comment => {
+                        if (comment.id !== id) return comment;
+                        comment.body = body;
+                        return comment;
+                    })
+                );
+                setEditingComment(false);
+            })
+            .catch(err => alert('Error editing comment: ' + err));
     }
 
     return (
@@ -49,7 +69,7 @@ const Comment = ({ id, authorId, timestamp, body, gold, silver, bronze, parentTh
                         }}
                         className='hover:shadow-sm z-10'
                     >
-                        <HiOutlineChevronUp size={22} />
+                        <HiOutlineChevronUp size={22} color={vote === 'upvote' ? tierColours.gold : 'black'} />
                     </button>
                     <button
                         onClick={e => {
@@ -59,7 +79,7 @@ const Comment = ({ id, authorId, timestamp, body, gold, silver, bronze, parentTh
                         }}
                         className='hover:shadow-sm'
                     >
-                        <HiOutlineChevronDown size={22} />
+                        <HiOutlineChevronDown size={22} color={vote === 'downvote' ? tierColours.gold : 'black'} />
                     </button>
                 </div>
 
@@ -70,30 +90,52 @@ const Comment = ({ id, authorId, timestamp, body, gold, silver, bronze, parentTh
                         </Link>
                         <span className='text-gray-300 font-light text-[11px] ml-2'>{formatTime(timestamp)}</span>
                     </p>
-                    <p className='text-xs mt-1 mb-3'>{body}</p>
+                    {!editingComment ? (
+                        <p className='w-full max-h-12 text-xs mt-1 mb-3'>{body}</p>
+                    ) : (
+                        <textarea
+                            ref={bodyRef}
+                            autoFocus
+                            className='w-full max-h-12 resize-none text-xs mt-1 mb-3 border rounded outline-none transition-all duration-300 focus:shadow-[0_0_0_.175rem] focus:shadow-blue-300 focus:border-primary disabled:bg-transparent py-1 px-2'
+                        >
+                            {body}
+                        </textarea>
+                    )}
                     <div className='flex items-center gap-4'>
                         <Stars num={gold} tier='gold' />
                         <Stars num={silver} tier='silver' />
                         <Stars num={bronze} tier='bronze' />
                     </div>
-                    <div className='mt-1 flex gap-3 items-center text-xs'>
-                        <button onClick={() => setReplying(prev => !prev)} className='flex items-center gap-2 hover:text-primary py-1 rounded-full'>
-                            Reply
-                            <HiOutlineReply size={12} />
-                        </button>
-                        {user?.id === authorId && (
-                            <>
-                                <button onClick={() => null} className='flex items-center gap-2 hover:text-primary py-1 rounded-full'>
-                                    Edit
-                                    <RiEdit2Line size={14} />
-                                </button>
-                                <button onClick={handleDeleteComment} className='flex items-center gap-2 hover:text-red-500 focus:text-red-500 py-1 rounded-full'>
-                                    Delete
-                                    <FiTrash size={12} />
-                                </button>
-                            </>
-                        )}
-                    </div>
+                    {!editingComment ? (
+                        <div className='mt-2 flex gap-3 items-center text-xs'>
+                            <button onClick={() => setReplying(prev => !prev)} className='flex items-center gap-2 hover:text-primary py-1 rounded-full'>
+                                Reply
+                                <HiOutlineReply size={12} />
+                            </button>
+
+                            {user?.id === authorId && (
+                                <>
+                                    <button onClick={() => setEditingComment(true)} className='flex items-center gap-2 hover:text-primary py-1 rounded-full'>
+                                        Edit
+                                        <RiEdit2Line size={14} />
+                                    </button>
+                                    <button onClick={handleDeleteComment} className='flex items-center gap-2 hover:text-red-500 focus:text-red-500 py-1 rounded-full'>
+                                        Delete
+                                        <FiTrash size={12} />
+                                    </button>
+                                </>
+                            )}
+                        </div>
+                    ) : (
+                        <div className='mt-3 flex gap-3 items-center text-[12px]'>
+                            <button onClick={handleUpdateComment} className='bg-primary text-white py-1 px-3 rounded'>
+                                Save changes
+                            </button>
+                            <button onClick={() => setEditingComment(false)} className='bg-gray-300 py-1 px-3 rounded'>
+                                Cancel
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
 
