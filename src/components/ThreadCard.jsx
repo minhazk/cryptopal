@@ -10,12 +10,12 @@ import { useUserContext } from '../context/UserContext';
 import { useThreadContext } from '../context/ThreadContext';
 import { tierColours } from '../utils/colours';
 
-const ThreadCard = ({ id, tags, title, body, author, authorId, timestamp, gold, silver, bronze, short }) => {
+const ThreadCard = ({ id, tags, title, body, author, authorId, timestamp, gold, silver, bronze, vote, short }) => {
     const { user } = useUserContext();
     const [editingThread, setEditingThread] = useState(false);
     const [bodyContent, setBodyContent] = useState(body);
     const { deleteThread, handleVote, updatePost } = useThreadContext();
-    const [points, setPoints] = useState({ bronze, silver, gold, vote: null });
+    const [points, setPoints] = useState({ bronze, silver, gold, vote });
     const navigate = useNavigate();
 
     const bodyRef = useRef();
@@ -27,7 +27,7 @@ const ThreadCard = ({ id, tags, title, body, author, authorId, timestamp, gold, 
     }
 
     function handleThreadVote(variation) {
-        handleVote(id, 'thread', variation).then(({ userRank, alteration, vote }) =>
+        handleVote(id, 'thread', variation, authorId).then(({ userRank, alteration, vote }) =>
             setPoints(prev => {
                 return {
                     ...prev,

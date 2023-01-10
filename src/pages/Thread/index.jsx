@@ -24,13 +24,11 @@ const Thread = () => {
     }, [comments]);
 
     const rootComments = groupedComments[null];
-
-    useEffect(() => {
-        getThreadById(id).then(setThread);
-    }, []);
+    console.log(groupedComments);
 
     useEffect(() => {
         if (user === null) return;
+        getThreadById(id).then(setThread);
         getThreadComments(id).then(setComments);
     }, [user]);
 

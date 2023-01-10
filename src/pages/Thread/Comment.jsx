@@ -11,11 +11,12 @@ import { useThreadContext } from '../../context/ThreadContext';
 import { useUserContext } from '../../context/UserContext';
 import { tierColours } from '../../utils/colours';
 
-const Comment = ({ id, authorId, timestamp, body, gold, silver, bronze, parentThreadId, vote, groupedComments, setComments }) => {
+const Comment = ({ id, authorId, timestamp, body, gold, silver, bronze, parentThreadId, groupedComments, setComments }) => {
     const [replying, setReplying] = useState(false);
     const [editingComment, setEditingComment] = useState(false);
+    const [vote, setVote] = useState(null);
     const { user } = useUserContext();
-    const { getAuthor, deleteComment, handleVote, updatePost } = useThreadContext();
+    const { getAuthor, deleteComment, handleVote, updatePost, getUserVote } = useThreadContext();
     const [author, setAuthor] = useState(null);
     const childComments = groupedComments[id];
 
@@ -23,6 +24,7 @@ const Comment = ({ id, authorId, timestamp, body, gold, silver, bronze, parentTh
 
     useEffect(() => {
         getAuthor(authorId).then(authorData => setAuthor(authorData.author));
+        getUserVote(id, 'comment').then(setVote);
     }, [author]);
 
     function handleDeleteComment() {
@@ -30,7 +32,7 @@ const Comment = ({ id, authorId, timestamp, body, gold, silver, bronze, parentTh
     }
 
     function handleCommentVote(variation) {
-        handleVote(id, 'comment', variation).then(({ postId, userRank, alteration, vote }) => {
+        handleVote(id, 'comment', variation, authorId).then(({ postId, userRank, alteration, vote }) => {
             setComments(prev =>
                 prev.map(comment => {
                     if (comment.id !== postId) return comment;
@@ -39,6 +41,7 @@ const Comment = ({ id, authorId, timestamp, body, gold, silver, bronze, parentTh
                     return comment;
                 })
             );
+            setVote(vote);
         });
     }
 

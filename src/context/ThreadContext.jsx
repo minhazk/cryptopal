@@ -60,7 +60,14 @@ const ThreadProvider = ({ children }) => {
         const docRef = doc(db, 'thread', id);
         const docSnap = await getDoc(docRef);
         const thread = docSnap.data();
-        return { id, ...thread, timestamp: Number(thread.timestamp.seconds) * 1000, tags: await getTagsByIds(thread.tagIds), ...(await getAuthor(thread.authorId)) };
+        return {
+            id,
+            ...thread,
+            timestamp: Number(thread.timestamp.seconds) * 1000,
+            tags: await getTagsByIds(thread.tagIds),
+            ...(await getAuthor(thread.authorId)),
+            vote: await getUserVote(id, 'thread'),
+        };
     }
 
     async function createComment(body, parentThreadId, parentCommentId) {
@@ -117,31 +124,63 @@ const ThreadProvider = ({ children }) => {
 
     async function deleteThread(id) {
         await deleteDoc(doc(db, 'thread', id));
+        const itemsRef = collection(db, 'comment');
+        const q = query(itemsRef, where('parentThreadId', '==', id));
+        const querySnapshot = await getDocs(q);
+        const childComments = [];
+        querySnapshot.forEach(doc => {
+            childComments.push(doc.id);
+        });
+        for (const id of childComments) {
+            await deleteDoc(doc(db, 'comment', id));
+        }
     }
 
-    async function handleVote(postId, type, variation) {
+    async function getUserPoints(id) {
+        const docRef = doc(db, 'user', id);
+        const docSnap = await getDoc(docRef);
+        return docSnap.data().points;
+
+        // const docRef = doc(db, dbName, postDoc.id);
+        // await updateDoc(docRef, {
+        //     vote: vote === 'upvote' ? 'downvote' : 'upvote',
+        // });
+    }
+
+    async function updateUserPoints(userDocRef, userId, variation) {}
+
+    async function handleVote(postId, type, variation, postAuthorId) {
         const dbName = `${type}_vote`;
         const itemsRef = collection(db, dbName);
         const q = query(itemsRef, where(`${type}_id`, '==', postId), where('user_id', '==', user.id));
         const querySnapshot = await getDocs(q);
         let deletedVote = false;
+        let changingVote = false;
+
+        const authorPoints = await getUserPoints(postAuthorId);
+        const userRef = doc(db, 'user', postAuthorId);
+
         if (querySnapshot.empty) {
             await setDoc(doc(db, dbName, uuidv4()), {
                 user_id: user.id,
                 [`${type}_id`]: postId,
                 vote: variation,
             });
+            await updateDoc(userRef, { points: authorPoints + (variation === 'upvote' ? 1 : -1) });
         } else {
             const postDoc = querySnapshot.docs[0];
             const { vote } = postDoc.data();
             if (vote === variation) {
                 await deleteDoc(doc(db, dbName, postDoc.id));
+                await updateDoc(userRef, { points: authorPoints + (variation === 'upvote' ? -1 : 1) });
                 deletedVote = true;
             } else {
                 const docRef = doc(db, dbName, postDoc.id);
                 await updateDoc(docRef, {
                     vote: vote === 'upvote' ? 'downvote' : 'upvote',
                 });
+                await updateDoc(userRef, { points: authorPoints + (variation === 'upvote' ? 2 : -2) });
+                changingVote = true;
             }
         }
 
@@ -150,16 +189,18 @@ const ThreadProvider = ({ children }) => {
         const post = docSnap.data();
         const userRank = getUserRank();
 
-        let variationType = variation;
-        if (deletedVote && variationType === 'upvote') variationType = 'downvote';
-        else if (deletedVote && variationType === 'downvote') variationType = 'upvote';
+        let alteration = variation === 'upvote' ? post[userRank] + 1 : post[userRank] - 1;
+        if (deletedVote) {
+            alteration = variation === 'upvote' ? post[userRank] - 1 : post[userRank] + 1;
+        } else if (changingVote) {
+            alteration = variation === 'upvote' ? post[userRank] + 2 : post[userRank] - 2;
+        }
 
-        const alteration = variationType === 'upvote' ? Number(post[userRank]) + 1 : Number(post[userRank]) - 1;
         await updateDoc(docRef, {
             [userRank]: alteration,
         });
 
-        return { postId, userRank, alteration, vote: variationType };
+        return { postId, userRank, alteration, vote: deletedVote ? null : variation };
     }
 
     async function updatePost(id, type, body) {
@@ -169,7 +210,7 @@ const ThreadProvider = ({ children }) => {
     }
 
     return (
-        <ThreadContext.Provider value={{ createThread, getAllThreads, getThreadById, createComment, getThreadComments, getAuthor, deleteComment, deleteThread, handleVote, updatePost }}>
+        <ThreadContext.Provider value={{ createThread, getAllThreads, getThreadById, createComment, getThreadComments, getAuthor, deleteComment, deleteThread, handleVote, updatePost, getUserVote }}>
             {children}
         </ThreadContext.Provider>
     );
