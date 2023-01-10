@@ -13,7 +13,7 @@ import { useUserContext } from '../../context/UserContext';
 const Comment = ({ id, authorId, timestamp, body, gold, silver, bronze, parentThreadId, groupedComments, setComments }) => {
     const [replying, setReplying] = useState(false);
     const { user } = useUserContext();
-    const { getAuthor, deleteComment } = useThreadContext();
+    const { getAuthor, deleteComment, handleVote } = useThreadContext();
     const [author, setAuthor] = useState(null);
     const childComments = groupedComments[id];
 
@@ -25,6 +25,18 @@ const Comment = ({ id, authorId, timestamp, body, gold, silver, bronze, parentTh
         deleteComment(id).then(id => setComments(prev => prev.filter(comment => comment.id != id)));
     }
 
+    function handleCommentVote(variation) {
+        handleVote(id, 'comment', variation).then(({ postId, userRank, alteration }) => {
+            setComments(prev =>
+                prev.map(comment => {
+                    if (comment.id !== postId) return comment;
+                    comment[userRank] = alteration;
+                    return comment;
+                })
+            );
+        });
+    }
+
     return (
         <div>
             <div className='bg-white rounded shadow-sm px-3 py-4 pr-5 flex gap-3'>
@@ -33,6 +45,7 @@ const Comment = ({ id, authorId, timestamp, body, gold, silver, bronze, parentTh
                         onClick={e => {
                             e.preventDefault();
                             e.stopPropagation();
+                            handleCommentVote('upvote');
                         }}
                         className='hover:shadow-sm z-10'
                     >
@@ -42,6 +55,7 @@ const Comment = ({ id, authorId, timestamp, body, gold, silver, bronze, parentTh
                         onClick={e => {
                             e.preventDefault();
                             e.stopPropagation();
+                            handleCommentVote('downvote');
                         }}
                         className='hover:shadow-sm'
                     >
@@ -69,7 +83,7 @@ const Comment = ({ id, authorId, timestamp, body, gold, silver, bronze, parentTh
                         </button>
                         {user?.id === authorId && (
                             <>
-                                <button onClick={() => setReplying(prev => !prev)} className='flex items-center gap-2 hover:text-primary py-1 rounded-full'>
+                                <button onClick={() => null} className='flex items-center gap-2 hover:text-primary py-1 rounded-full'>
                                     Edit
                                     <RiEdit2Line size={14} />
                                 </button>

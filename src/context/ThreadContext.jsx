@@ -2,13 +2,13 @@ import { createContext, useContext } from 'react';
 import { useUserContext } from './UserContext';
 import { v4 as uuidv4 } from 'uuid';
 import { db } from '../firebase';
-import { doc, setDoc, getDoc, query, collection, getDocs, where, documentId, deleteDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, query, collection, getDocs, where, documentId, deleteDoc, updateDoc } from 'firebase/firestore';
 
 const ThreadContext = createContext({});
 const useThreadContext = () => useContext(ThreadContext);
 
 const ThreadProvider = ({ children }) => {
-    const { user } = useUserContext();
+    const { user, getUserRank } = useUserContext();
 
     async function createThread(title, body, tagIds) {
         const id = uuidv4();
@@ -111,7 +111,54 @@ const ThreadProvider = ({ children }) => {
         await deleteDoc(doc(db, 'thread', id));
     }
 
-    return <ThreadContext.Provider value={{ createThread, getAllThreads, getThreadById, createComment, getThreadComments, getAuthor, deleteComment, deleteThread }}>{children}</ThreadContext.Provider>;
+    async function handleVote(postId, type, variation) {
+        const dbName = `${type}_vote`;
+        const itemsRef = collection(db, dbName);
+        const q = query(itemsRef, where(`${type}_id`, '==', postId), where('user_id', '==', user.id));
+        const querySnapshot = await getDocs(q);
+        let deletedVote = false;
+        if (querySnapshot.empty) {
+            await setDoc(doc(db, dbName, uuidv4()), {
+                user_id: user.id,
+                [`${type}_id`]: postId,
+                vote: variation,
+            });
+        } else {
+            const postDoc = querySnapshot.docs[0];
+            const { vote } = postDoc.data();
+            if (vote === variation) {
+                await deleteDoc(doc(db, dbName, postDoc.id));
+                deletedVote = true;
+            } else {
+                const docRef = doc(db, dbName, postDoc.id);
+                await updateDoc(docRef, {
+                    vote: vote === 'upvote' ? 'downvote' : 'upvote',
+                });
+            }
+        }
+
+        const docRef = doc(db, type, postId);
+        const docSnap = await getDoc(docRef);
+        const post = docSnap.data();
+        const userRank = getUserRank();
+
+        let variationType = variation;
+        if (deletedVote && variationType === 'upvote') variationType = 'downvote';
+        else if (deletedVote && variationType === 'downvote') variationType = 'upvote';
+
+        const alteration = variationType === 'upvote' ? Number(post[userRank]) + 1 : Number(post[userRank]) - 1;
+        await updateDoc(docRef, {
+            [userRank]: alteration,
+        });
+
+        return { postId, userRank, alteration };
+    }
+
+    return (
+        <ThreadContext.Provider value={{ createThread, getAllThreads, getThreadById, createComment, getThreadComments, getAuthor, deleteComment, deleteThread, handleVote }}>
+            {children}
+        </ThreadContext.Provider>
+    );
 };
 
 export { useThreadContext, ThreadProvider };

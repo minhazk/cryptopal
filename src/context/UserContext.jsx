@@ -104,12 +104,18 @@ const UserProvider = ({ children }) => {
             });
     }, []);
 
+    function getUserRank() {
+        return user.points < 500 ? 'bronze' : user.points < 1000 ? 'silver' : 'gold';
+    }
+
     useEffect(() => {
         if (user === null) return;
         getUserTags();
     }, [user]);
 
-    return <UserContext.Provider value={{ user, userTags, signUpUser, signInUser, signInWithGoogle, logout, updateUserTags, tags: allTags, getUserById }}>{children}</UserContext.Provider>;
+    return (
+        <UserContext.Provider value={{ user, userTags, signUpUser, signInUser, signInWithGoogle, logout, updateUserTags, tags: allTags, getUserById, getUserRank }}>{children}</UserContext.Provider>
+    );
 };
 
 export { useUserContext, UserProvider };

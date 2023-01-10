@@ -11,13 +11,17 @@ import { useThreadContext } from '../context/ThreadContext';
 
 const ThreadCard = ({ id, tags, title, body, author, authorId, timestamp, gold, silver, bronze, short }) => {
     const { user } = useUserContext();
-    const { deleteThread } = useThreadContext();
+    const { deleteThread, handleVote } = useThreadContext();
     const navigate = useNavigate();
 
     function handleDeleteThread() {
         deleteThread(id)
             .then(() => navigate('/home'))
             .catch(err => alert('Error deleting thread: ' + err));
+    }
+
+    function handleThreadVote(variation) {
+        handleVote(id, 'thread', variation).then(({ id, userRank, alteration }) => null);
     }
 
     return (
@@ -27,6 +31,7 @@ const ThreadCard = ({ id, tags, title, body, author, authorId, timestamp, gold, 
                     onClick={e => {
                         e.preventDefault();
                         e.stopPropagation();
+                        handleThreadVote('upvote');
                     }}
                     className='hover:shadow-md'
                 >
@@ -36,6 +41,7 @@ const ThreadCard = ({ id, tags, title, body, author, authorId, timestamp, gold, 
                     onClick={e => {
                         e.preventDefault();
                         e.stopPropagation();
+                        handleThreadVote('downvote');
                     }}
                     className='hover:shadow-md'
                 >
