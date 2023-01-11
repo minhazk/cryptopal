@@ -24,7 +24,6 @@ const Thread = () => {
     }, [comments]);
 
     const rootComments = groupedComments[null];
-    console.log(groupedComments);
 
     useEffect(() => {
         if (user === null) return;

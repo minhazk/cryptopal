@@ -49,10 +49,17 @@ const ThreadProvider = ({ children }) => {
         const q = query(collection(db, 'thread'));
         const querySnapshot = await getDocs(q);
         const threads = [];
-        querySnapshot.forEach(async doc => {
-            const { title, body, authorId, bronze, silver, gold, tagIds, timestamp } = doc.data();
-            threads.push({ id: doc.id, title, body, bronze, silver, gold, ...(await getAuthor(authorId)), tags: await getTagsByIds(tagIds), timestamp: Number(timestamp.seconds) * 1000 });
-        });
+        for await (const threadDoc of querySnapshot.docs) {
+            const { authorId, timestamp, tagIds } = await threadDoc.data();
+            threads.push({
+                ...threadDoc.data(),
+                id: threadDoc.id,
+                ...(await getAuthor(authorId)),
+                tags: await getTagsByIds(tagIds),
+                timestamp: timestamp.seconds * 1000,
+                vote: await getUserVote(threadDoc.id, 'thread'),
+            });
+        }
         return threads;
     }
 
@@ -140,14 +147,7 @@ const ThreadProvider = ({ children }) => {
         const docRef = doc(db, 'user', id);
         const docSnap = await getDoc(docRef);
         return docSnap.data().points;
-
-        // const docRef = doc(db, dbName, postDoc.id);
-        // await updateDoc(docRef, {
-        //     vote: vote === 'upvote' ? 'downvote' : 'upvote',
-        // });
     }
-
-    async function updateUserPoints(userDocRef, userId, variation) {}
 
     async function handleVote(postId, type, variation, postAuthorId) {
         const dbName = `${type}_vote`;
