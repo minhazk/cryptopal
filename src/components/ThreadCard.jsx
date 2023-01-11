@@ -95,7 +95,7 @@ const ThreadCard = ({ id, tags, title, body, author, authorId, timestamp, gold, 
                     </textarea>
                 )}
                 <p className='my-2'>
-                    <Link to={`/profile/${authorId}`} className='text-accent font-semibold hover:underline text-xs'>
+                    <Link to={`/profile/${authorId}`} onClick={e => e.stopPropagation()} className='text-accent font-semibold hover:underline text-xs'>
                         {author}
                     </Link>
                     <span className='text-gray-400 font-light text-[11px] ml-2'>{formatTime(timestamp)}</span>

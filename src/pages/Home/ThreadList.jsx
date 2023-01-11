@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { RxGear } from 'react-icons/rx';
 import { BiSortAlt2 } from 'react-icons/bi';
 import ThreadCard from '../../components/ThreadCard';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import TagList from '../../components/TagList';
 import TagPicker from '../../components/TagPicker';
-import { useThreadContext } from '../../context/ThreadContext';
 
 const ThreadList = ({ threads }) => {
     const [tags, setTags] = useState([]);
     const [isEditingTags, setIsEditingTags] = useState(false);
+    const navigate = useNavigate();
 
     // useEffect(() => {
     //     if (tags.length === 0) {
@@ -40,9 +40,9 @@ const ThreadList = ({ threads }) => {
 
             <div className='flex flex-col gap-4 mt-4 py-2'>
                 {threads.map(thread => (
-                    <Link key={thread.id} to={`/thread/${thread.id}`}>
+                    <div key={thread.id} onClick={() => navigate(`/thread/${thread.id}`)} className='hover:cursor-pointer'>
                         <ThreadCard key={thread.id} {...thread} short />
-                    </Link>
+                    </div>
                 ))}
             </div>
         </div>
