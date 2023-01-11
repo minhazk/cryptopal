@@ -7,99 +7,61 @@ import Carousel from './Carousel';
 import RecentCommentCard from './RecentCommentCard';
 import StatCard from './StatCard';
 import { RiPencilFill } from 'react-icons/ri';
-import { AiOutlinePlus } from 'react-icons/ai';
 import UserIcon from '../../components/UserIcon';
 import TagPicker from '../../components/TagPicker';
 import { useUserContext } from '../../context/UserContext';
 import Button from '../../components/ui/Button';
+import UploadAchievement from './UploadAchievement';
 
 const Profile = () => {
     const { id } = useParams();
-    const { user: currentUser, getUserById, userTags, updateUserTags } = useUserContext();
-    const [owner, setOwner] = useState(currentUser?.id === id);
+    const { user: loggedInUser, getUserById, userTags, updateUserTags, followUser, unfollowUser, getUserStats, isFollowing: isFollowingUser, getUserAchievements, getUserComments } = useUserContext();
+    const [isOwner, setIsOwner] = useState(false);
     const [tags, setTags] = useState(userTags);
     const [isEditingTags, setIsEditingTags] = useState(false);
     const [user, setUser] = useState(null);
-
-    const recentComments = [
-        {
-            id: 123123,
-            body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, Ipsum sit amet. Lorem ipsum dolor sit amet, consectetur adipiscing ',
-            bronze: 2,
-            silver: 7,
-            gold: 11,
-            parentId: 12,
-        },
-        {
-            id: 2312,
-            body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit,',
-            bronze: 2,
-            silver: 7,
-            gold: 11,
-            parentId: 12,
-        },
-        {
-            id: 323123,
-            body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, Ipsum sit amet',
-            bronze: 2,
-            silver: 7,
-            gold: 11,
-            parentId: 12,
-        },
-    ];
-
-    const achievements = [
-        {
-            id: 12321,
-            imgUrl: 'https://source.unsplash.com/random/1',
-            bronze: 3,
-            silver: 1,
-            gold: 2,
-            userId: 12,
-        },
-        {
-            id: 2312,
-            imgUrl: 'https://source.unsplash.com/random/2',
-            bronze: 3,
-            silver: 1,
-            gold: 2,
-            userId: 12,
-        },
-        {
-            id: 3123,
-            imgUrl: 'https://source.unsplash.com/random/3',
-            bronze: 3,
-            silver: 1,
-            gold: 2,
-            userId: 12,
-        },
-    ];
+    const [isFollowing, setIsFollowing] = useState(true);
+    const [userStats, setUserStats] = useState(null);
+    const [recentComments, setRecentComments] = useState([]);
+    const [achievements, setAchievements] = useState([]);
 
     useEffect(() => {
         updateUserTags(tags);
     }, [tags]);
 
     useEffect(() => {
-        setOwner(currentUser?.id === id);
-    }, [currentUser]);
+        if (loggedInUser === null) return;
+        setIsOwner(loggedInUser?.id === id);
+        isFollowingUser(id).then(setIsFollowing);
+    }, [loggedInUser]);
 
     useEffect(() => {
-        (async () => {
-            setUser(await getUserById(id));
-            setTags(userTags);
-        })();
+        getUserById(id).then(setUser);
+        getUserStats(id).then(setUserStats);
+        getUserAchievements(id).then(setAchievements);
+        getUserComments(id).then(setRecentComments);
+        setTags(userTags);
     }, []);
+
+    useEffect(() => {
+        getUserStats(id).then(setUserStats);
+    }, [isFollowing]);
 
     return (
         <Page hideSideProfile>
             <div className='grid grid-cols-[auto_1fr] md:grid-cols-[auto_auto_1fr] gap-x-4 md:gap-x-4 lg:gap-x-10 items-center'>
                 <div className='ml-6 flex flex-col'>
-                    <UserIcon src={user?.photoUrl} width={owner ? '100px' : '70px'} />
-                    {!owner && (
-                        <div className='text-xs flex justify-center mt-2'>
-                            <Button label='Follow' onClick={null} />
-                        </div>
-                    )}
+                    <UserIcon src={user?.photoUrl} width={isOwner ? '100px' : '70px'} />
+                    {!isOwner &&
+                        (!isFollowing ? (
+                            <div className='text-xs flex justify-center mt-2'>
+                                <Button label='Follow' onClick={() => followUser(id).then(() => setIsFollowing(true))} />
+                            </div>
+                        ) : (
+                            <div className='text-xs flex justify-center mt-2'>
+                                <Button label='Unfollow' onClick={() => unfollowUser(id).then(() => setIsFollowing(false))} />
+                            </div>
+                        ))}
                 </div>
                 <div className='flex flex-col gap-3 py-2 px-4'>
                     <p className='text-lg text-primary font-semibold'>{user?.displayName}</p>
@@ -107,20 +69,20 @@ const Profile = () => {
                         to='/about'
                         className='bg-[#E0DBF6] text-accent w-fit font-semibold text-xs rounded-full py-[6px] px-3 transition-colors hover:bg-accent focus:bg-accent hover:text-white focus:text-white'
                     >
-                        {user?.points ?? 0} points
+                        {user?.points ?? 0} point{user?.points > 1 && 's'}
                     </Link>
                 </div>
                 <div className='col-span-2 md:col-span-1 flex mt-5 md:mt-0 divide-x divide-gray-200 rounded-md shadow-md bg-white w-full mx-auto md:max-w-[450px]'>
-                    <StatCard label='Threads' num={0} />
-                    <StatCard label='Following' num={0} />
-                    <StatCard label='Followers' num={0} />
+                    <StatCard label='Threads' num={userStats?.threads ?? 0} />
+                    <StatCard label='Following' num={userStats?.following ?? 0} />
+                    <StatCard label='Followers' num={userStats?.followers ?? 0} />
                 </div>
             </div>
 
             <h2 className='mt-8 mb-3 font-medium lg:text-md'>Topics of interest</h2>
             <div className='flex gap-2 items-center'>
                 {userTags.length === 0 ? <p className='text-sm'>No categories selected</p> : <TagList tags={userTags} />}
-                {owner && (
+                {isOwner && (
                     <button
                         onClick={() => setIsEditingTags(prev => !prev)}
                         className='border text-primary hover:bg-primary hover:text-white focus:bg-primary focus:text-white transition-colors border-primary aspect-square w-7 flex items-center justify-center rounded'
@@ -128,25 +90,31 @@ const Profile = () => {
                         <RiPencilFill size={20} />
                     </button>
                 )}
-                {isEditingTags && owner && <TagPicker tags={tags} setTags={setTags} closePopup={() => setIsEditingTags(false)} />}
+                {isEditingTags && isOwner && <TagPicker tags={tags} setTags={setTags} closePopup={() => setIsEditingTags(false)} />}
             </div>
 
             <h2 className='mt-8 font-medium lg:text-md'>Recent Activity</h2>
-            <Carousel
-                cards={recentComments.map(comment => (
-                    <RecentCommentCard key={comment.id} {...comment} />
-                ))}
-            />
+            {recentComments.length === 0 ? (
+                <div className='flex items-center justify-center text-sm text-gray-400 h-16 mb-6'>
+                    <p>This has user has not interacted with any threads yet</p>
+                </div>
+            ) : (
+                <Carousel
+                    cards={recentComments.map(comment => (
+                        <RecentCommentCard key={comment.id} {...comment} />
+                    ))}
+                    size={recentComments.length}
+                />
+            )}
 
             <h2 className='font-medium lg:text-md'>Achievements</h2>
-            <Carousel
-                cards={[
-                    ...achievements.map(achievement => <AchievementCard key={achievement.id} {...achievement} />),
-                    <button key={-Infinity} className='border border-primary text-primary flex items-center justify-center rounded hover:opacity-60 transition-opacity'>
-                        <AiOutlinePlus size={65} />
-                    </button>,
-                ]}
-            />
+            {achievements.length === 0 ? (
+                <div className='flex items-center justify-center text-sm text-gray-400 h-16'>
+                    <p>This has user has not posted any achievements yet</p>
+                </div>
+            ) : (
+                <Carousel cards={[...achievements.map(achievement => <AchievementCard key={achievement.id} {...achievement} />), isOwner ? <UploadAchievement key={-Infinity} /> : null]} />
+            )}
         </Page>
     );
 };

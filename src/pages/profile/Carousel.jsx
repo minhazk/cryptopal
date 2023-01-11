@@ -1,19 +1,28 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { colours } from '../../utils/colours';
 import { HiOutlineChevronLeft, HiOutlineChevronRight } from 'react-icons/hi';
 
-const Carousel = ({ cards, options }) => {
-    const OPTIONS = {
+const Carousel = ({ cards, size }) => {
+    const [xOffset, setXOffset] = useState(0);
+    const [cardsPerSlide, setCardsPerSlide] = useState(2);
+    const [options, setOptions] = useState({
         gap: '1em',
         cardsPerSlide: 2,
-        ...options,
-    };
+        numOfSlides: Math.ceil(size / cardsPerSlide),
+    });
 
-    const [xOffset, setXOffset] = useState(0);
-    const [numOfSlides, setNumOfSlides] = useState(Math.ceil(cards.length / OPTIONS.cardsPerSlide)); // in case screen size changes
+    useEffect(() => {
+        const resize = () => {
+            if (window.innerWidth < 500) {
+                setCardsPerSlide(1);
+            } else setCardsPerSlide(2);
+        };
+        window.addEventListener('resize', resize);
+        return () => window.removeEventListener('resize', resize);
+    }, []);
 
     const handleNextPage = () => {
-        if (Math.abs(xOffset) === OPTIONS.cardsPerSlide) return;
+        if (Math.abs(xOffset) === options.cardsPerSlide) return;
         setXOffset(prev => prev - 1);
     };
 
@@ -23,13 +32,13 @@ const Carousel = ({ cards, options }) => {
     };
 
     return (
-        <div className='overflow-x-hidden my-2 py-2 w-full max-w-[920px]'>
+        <div className='overflow-x-hidden my-2 py-2 max-w-[93vw] md:max-w-[75vw] lg:max-w-[60vw]' style={{ maxWidth: cardsPerSlide === 1 && '88vw' }}>
             <div
                 className='grid grid-flow-col transition-transform'
                 style={{
-                    gridGap: OPTIONS.gap,
-                    gridAutoColumns: `calc(100% / ${OPTIONS.cardsPerSlide} - (${OPTIONS.gap} - ${OPTIONS.gap} / ${OPTIONS.cardsPerSlide}))`,
-                    transform: `translateX(calc(${xOffset} * 100% - (${xOffset} * ${OPTIONS.gap} * -1)))`,
+                    gridGap: options.gap,
+                    gridAutoColumns: `calc(100% / ${cardsPerSlide} - (${options.gap} - ${options.gap} / ${cardsPerSlide}))`,
+                    transform: `translateX(calc(${xOffset} * 100% - (${xOffset} * ${options.gap} * -1)))`,
                 }}
             >
                 {cards}
@@ -38,7 +47,7 @@ const Carousel = ({ cards, options }) => {
                 <button onClick={handlePrevPage} className='hover:shadow-md'>
                     <HiOutlineChevronLeft size={20} />
                 </button>
-                {Array.from({ length: numOfSlides }).map((_n, i) => (
+                {Array.from({ length: options.numOfSlides }).map((_n, i) => (
                     <PageDot key={i} active={-xOffset === i} setXOffset={setXOffset} pageNum={i} />
                 ))}
                 <button onClick={handleNextPage} className='hover:shadow-md'>

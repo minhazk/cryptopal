@@ -18,7 +18,6 @@ const Home = () => {
         if (user === null) return;
         getAllThreads().then(setThreads);
     }, [user]);
-    console.log(threads);
 
     return (
         <Page>

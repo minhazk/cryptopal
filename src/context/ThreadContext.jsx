@@ -50,7 +50,7 @@ const ThreadProvider = ({ children }) => {
         const querySnapshot = await getDocs(q);
         const threads = [];
         for await (const threadDoc of querySnapshot.docs) {
-            const { authorId, timestamp, tagIds } = await threadDoc.data();
+            const { authorId, timestamp, tagIds } = threadDoc.data();
             threads.push({
                 ...threadDoc.data(),
                 id: threadDoc.id,
