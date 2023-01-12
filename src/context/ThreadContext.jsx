@@ -2,7 +2,7 @@ import { createContext, useContext } from 'react';
 import { useUserContext } from './UserContext';
 import { v4 as uuidv4 } from 'uuid';
 import { db } from '../firebase';
-import { doc, setDoc, getDoc, query, collection, getDocs, where, documentId, deleteDoc, updateDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, query, collection, getDocs, where, documentId, deleteDoc, updateDoc, addDoc } from 'firebase/firestore';
 
 const ThreadContext = createContext({});
 const useThreadContext = () => useContext(ThreadContext);
@@ -21,9 +21,15 @@ const ThreadProvider = ({ children }) => {
             silver: 0,
             gold: 0,
             tagIds,
+            [getUserRank(user.id)]: 1,
         };
         await setDoc(doc(db, 'thread', id), newThread);
-        return { ...newThread, author: user.displayName, id };
+        await setDoc(doc(db, 'thread_vote', uuidv4()), {
+            user_id: user.id,
+            thread_id: id,
+            vote: 'upvote',
+        });
+        return { ...newThread, vote: 'upvote', author: user.displayName, id };
     }
 
     async function getAuthor(id) {
@@ -87,9 +93,15 @@ const ThreadProvider = ({ children }) => {
             gold: 0,
             parentThreadId,
             parentCommentId,
+            [getUserRank(user.id)]: 1,
         };
         const id = uuidv4();
         await setDoc(doc(db, 'comment', id), newComment);
+        await setDoc(doc(db, 'comment_vote', uuidv4()), {
+            user_id: user.id,
+            comment_id: id,
+            vote: 'upvote',
+        });
         return { ...newComment, id };
     }
 
@@ -209,8 +221,48 @@ const ThreadProvider = ({ children }) => {
         return { id, body };
     }
 
+    async function saveThread(id) {
+        await addDoc(collection(db, 'saved'), {
+            userId: user.id,
+            threadId: id,
+        });
+    }
+
+    async function unSaveThread(id) {
+        const itemsRef = collection(db, 'saved');
+        const q = query(itemsRef, where('userId', '==', user.id), where('threadId', '==', id));
+        const querySnapshot = await getDocs(q);
+        if (querySnapshot.empty) return;
+        const docId = querySnapshot.docs[0].id;
+        await deleteDoc(doc(db, 'saved', docId));
+    }
+
+    async function isThreadSaved(id) {
+        const itemsRef = collection(db, 'saved');
+        const q = query(itemsRef, where('userId', '==', user.id), where('threadId', '==', id));
+        const querySnapshot = await getDocs(q);
+        return !querySnapshot.empty;
+    }
+
     return (
-        <ThreadContext.Provider value={{ createThread, getAllThreads, getThreadById, createComment, getThreadComments, getAuthor, deleteComment, deleteThread, handleVote, updatePost, getUserVote }}>
+        <ThreadContext.Provider
+            value={{
+                createThread,
+                getAllThreads,
+                getThreadById,
+                createComment,
+                getThreadComments,
+                getAuthor,
+                deleteComment,
+                deleteThread,
+                handleVote,
+                updatePost,
+                getUserVote,
+                saveThread,
+                unSaveThread,
+                isThreadSaved,
+            }}
+        >
             {children}
         </ThreadContext.Provider>
     );

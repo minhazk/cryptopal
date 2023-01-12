@@ -67,7 +67,7 @@ const CreateForm = ({ setThreads }) => {
                         <div className='ml-auto flex gap-2'>
                             <button
                                 onClick={() => {
-                                    setValue('');
+                                    setTitle('');
                                     setTags([]);
                                 }}
                                 className='bg-gray-300 text-sm py-1 px-3 rounded'

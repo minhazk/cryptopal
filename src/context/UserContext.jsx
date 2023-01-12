@@ -28,7 +28,7 @@ const UserProvider = ({ children }) => {
                     points: 0,
                 });
             })
-            .catch(() => alert('There was an error creating your account.'));
+            .catch(err => alert('There was an error creating your account: ' + err));
 
     const signInUser = (email, password) => signInWithEmailAndPassword(auth, email, password);
 

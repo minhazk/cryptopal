@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { HiOutlineChevronUp, HiOutlineChevronDown } from 'react-icons/hi';
 import { FiTrash } from 'react-icons/fi';
@@ -9,16 +9,22 @@ import Stars from './ui/Stars';
 import { useUserContext } from '../context/UserContext';
 import { useThreadContext } from '../context/ThreadContext';
 import { tierColours } from '../utils/colours';
+import { BsBookmark, BsBookmarkDash } from 'react-icons/bs';
 
 const ThreadCard = ({ id, tags, title, body, author, authorId, timestamp, gold, silver, bronze, vote, short }) => {
     const { user } = useUserContext();
     const [editingThread, setEditingThread] = useState(false);
     const [bodyContent, setBodyContent] = useState(body);
-    const { deleteThread, handleVote, updatePost } = useThreadContext();
+    const { deleteThread, handleVote, updatePost, saveThread, unSaveThread, isThreadSaved } = useThreadContext();
     const [points, setPoints] = useState({ bronze, silver, gold, vote });
+    const [saved, setSaved] = useState(false);
     const navigate = useNavigate();
-
     const bodyRef = useRef();
+
+    useEffect(() => {
+        if (user === null) return;
+        isThreadSaved(id).then(setSaved);
+    }, []);
 
     function handleDeleteThread() {
         deleteThread(id)
@@ -45,6 +51,14 @@ const ThreadCard = ({ id, tags, title, body, author, authorId, timestamp, gold, 
                 setEditingThread(false);
             })
             .catch(err => alert('Error updating thread: ' + err));
+    }
+
+    function handleSaveThread() {
+        saveThread(id).then(() => setSaved(true));
+    }
+
+    function handleUnsaveThread() {
+        unSaveThread(id).then(() => setSaved(false));
     }
 
     return (
@@ -105,30 +119,43 @@ const ThreadCard = ({ id, tags, title, body, author, authorId, timestamp, gold, 
                     <Stars num={points.silver} tier='silver' />
                     <Stars num={points.bronze} tier='bronze' />
                 </div>
-                {!editingThread ? (
-                    !short &&
-                    authorId === user?.id && (
+                {!short &&
+                    (!editingThread ? (
                         <div className='flex gap-3 items-center text-xs mt-3'>
-                            <button onClick={() => setEditingThread(true)} className='flex gap-2 items-center hover:text-primary'>
-                                Edit
-                                <RiEdit2Line />
+                            {authorId === user?.id && (
+                                <>
+                                    <button onClick={() => setEditingThread(true)} className='flex gap-2 items-center hover:text-primary'>
+                                        Edit
+                                        <RiEdit2Line />
+                                    </button>
+                                    <button onClick={handleDeleteThread} className='flex gap-2 items-center hover:text-red-500'>
+                                        Delete
+                                        <FiTrash />
+                                    </button>
+                                </>
+                            )}
+                            {!saved ? (
+                                <button onClick={handleSaveThread} className='flex gap-2 items-center hover:text-accent'>
+                                    Save
+                                    <BsBookmark />
+                                </button>
+                            ) : (
+                                <button onClick={handleUnsaveThread} className='flex gap-2 items-center hover:text-red-500'>
+                                    Unsave
+                                    <BsBookmarkDash />
+                                </button>
+                            )}
+                        </div>
+                    ) : (
+                        <div className='mt-3 flex gap-3 items-center text-[12px]'>
+                            <button onClick={handleUpdateThread} className='bg-primary text-white py-1 px-3 rounded'>
+                                Save changes
                             </button>
-                            <button onClick={handleDeleteThread} className='flex gap-2 items-center hover:text-red-500'>
-                                Delete
-                                <FiTrash />
+                            <button onClick={() => setEditingThread(false)} className='bg-gray-300 py-1 px-3 rounded'>
+                                Cancel
                             </button>
                         </div>
-                    )
-                ) : (
-                    <div className='mt-3 flex gap-3 items-center text-[12px]'>
-                        <button onClick={handleUpdateThread} className='bg-primary text-white py-1 px-3 rounded'>
-                            Save changes
-                        </button>
-                        <button onClick={() => setEditingThread(false)} className='bg-gray-300 py-1 px-3 rounded'>
-                            Cancel
-                        </button>
-                    </div>
-                )}
+                    ))}
             </div>
         </div>
     );
