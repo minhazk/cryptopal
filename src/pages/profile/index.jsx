@@ -87,7 +87,7 @@ const Profile = () => {
             <h2 className='mt-8 mb-3 font-medium lg:text-md'>Topics of interest</h2>
             <div className='flex gap-2 items-center'>
                 {tags.length === 0 ? <p className='text-sm'>No categories selected</p> : <TagList tags={tags} />}
-                {isOwner && <EditTags onChange={updateUserTags} />}
+                {isOwner && <EditTags onChange={updateUserTags} setTags={setTags} tags={tags} />}
             </div>
 
             <h2 className='mt-8 font-medium lg:text-md'>Recent Activity</h2>

@@ -1,14 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { RiPencilFill } from 'react-icons/ri';
 import TagPicker from './TagPicker';
 
-const EditTags = ({ onChange }) => {
-    const [tags, setTags] = useState([]);
+const EditTags = ({ onChange = () => null, setTags: setParentTags, tags: parentTags }) => {
     const [isEditingTags, setIsEditingTags] = useState(false);
-
-    useEffect(() => {
-        onChange(tags);
-    }, [tags]);
 
     return (
         <>
@@ -18,7 +13,16 @@ const EditTags = ({ onChange }) => {
             >
                 <RiPencilFill size={20} />
             </button>
-            {isEditingTags && <TagPicker tags={tags} setTags={setTags} closePopup={() => setIsEditingTags(false)} />}
+            {isEditingTags && (
+                <TagPicker
+                    tags={parentTags}
+                    closePopup={tags => {
+                        onChange(tags.map(tag => tag.id));
+                        setParentTags(tags);
+                        setIsEditingTags(false);
+                    }}
+                />
+            )}
         </>
     );
 };

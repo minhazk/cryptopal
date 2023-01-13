@@ -15,7 +15,7 @@ const CreateForm = ({ setThreads }) => {
 
     const handleCreateThread = () => {
         if (tags.length === 0) return alert('Please provide some tags');
-        createThread(title, body, tags.map(tag => tag.id) || [])
+        createThread(title, body, tags)
             .then(thread => {
                 createLocalThread(thread);
                 setTitle('');
@@ -28,8 +28,6 @@ const CreateForm = ({ setThreads }) => {
     function createLocalThread(thread) {
         setThreads(prev => [...prev, thread]);
     }
-
-    console.log(tags);
 
     return (
         <>
@@ -63,7 +61,7 @@ const CreateForm = ({ setThreads }) => {
                     <div className='flex items-center gap-10 mt-2'>
                         <div className='overflow-x-auto flex gap-2'>
                             <TagList tags={tags} />
-                            <EditTags onChange={setTags} />
+                            <EditTags setTags={setTags} tags={tags} />
                         </div>
                         <div className='ml-auto flex gap-2'>
                             <button

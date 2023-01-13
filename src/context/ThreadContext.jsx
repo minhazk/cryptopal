@@ -10,7 +10,7 @@ const useThreadContext = () => useContext(ThreadContext);
 const ThreadProvider = ({ children }) => {
     const { user, getUserRank } = useUserContext();
 
-    async function createThread(title, body, tagIds) {
+    async function createThread(title, body, tags) {
         const id = uuidv4();
         const newThread = {
             title,
@@ -20,7 +20,7 @@ const ThreadProvider = ({ children }) => {
             bronze: 0,
             silver: 0,
             gold: 0,
-            tagIds,
+            tagIds: tags.map(tag => tag.id),
             [getUserRank(user.id)]: 1,
         };
         await setDoc(doc(db, 'thread', id), newThread);
@@ -29,7 +29,7 @@ const ThreadProvider = ({ children }) => {
             thread_id: id,
             vote: 'upvote',
         });
-        return { ...newThread, vote: 'upvote', author: user.displayName, id };
+        return { ...newThread, tags, vote: 'upvote', author: user.displayName, id };
     }
 
     async function getAuthor(id) {
@@ -66,6 +66,7 @@ const ThreadProvider = ({ children }) => {
                 vote: await getUserVote(threadDoc.id, 'thread'),
             });
         }
+        console.log(threads);
         return threads;
     }
 
@@ -74,7 +75,6 @@ const ThreadProvider = ({ children }) => {
         const docSnap = await getDoc(docRef);
         if (!docSnap.exists()) return null;
         const thread = docSnap.data();
-        console.log(thread);
         return {
             id,
             ...thread,

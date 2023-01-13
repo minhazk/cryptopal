@@ -7,7 +7,7 @@ import Tag from './ui/Tag';
 import { colours } from '../utils/colours';
 import { useUserContext } from '../context/UserContext';
 
-const TagPicker = ({ tags, setTags, closePopup }) => {
+const TagPicker = ({ tags, closePopup }) => {
     const { getAllTags } = useUserContext();
     const [selected, setSelected] = useState(tags);
     const [allTags, setAllTags] = useState([]);
@@ -37,16 +37,19 @@ const TagPicker = ({ tags, setTags, closePopup }) => {
                 </div>
                 <h2 className='text-primary font-medium'>Current selected</h2>
                 <div className='flex gap-2 justify-center items-center flex-wrap'>
-                    {selected.length === 0 && <p className='text-sm'>No tags selected</p>}
-                    {selected.map(tag => (
-                        <button
-                            key={tag.id}
-                            onClick={() => setSelected(prev => prev.filter(t => t.id !== tag.id))}
-                            className='border-2 border-transparent hover:border-black rounded-md relative after:absolute after:hidden hover:after:block after:content-["x"] after:top-1 after:right-0 after:-translate-y-1/2 after:translate-x-1/2 after:bg-white after:text-red-700 after:rounded-full after:text-[11px] after:w-4 after:font-extrabold after:border after:border-red-700 after:leading-3 after:p-px'
-                        >
-                            <Tag {...tag} />
-                        </button>
-                    ))}
+                    {selected.length === 0 ? (
+                        <p className='text-sm'>No tags selected</p>
+                    ) : (
+                        selected.map(tag => (
+                            <button
+                                key={tag.id}
+                                onClick={() => setSelected(prev => prev.filter(t => t.id !== tag.id))}
+                                className='border-2 border-transparent hover:border-black rounded-md relative after:absolute after:hidden hover:after:block after:content-["x"] after:top-1 after:right-0 after:-translate-y-1/2 after:translate-x-1/2 after:bg-white after:text-red-700 after:rounded-full after:text-[11px] after:w-4 after:font-extrabold after:border after:border-red-700 after:leading-3 after:p-px'
+                            >
+                                <Tag {...tag} />
+                            </button>
+                        ))
+                    )}
                     <div className='relative'>
                         <input
                             placeholder='Enter new'
@@ -60,8 +63,7 @@ const TagPicker = ({ tags, setTags, closePopup }) => {
                 <Button
                     label='Done'
                     onClick={() => {
-                        setTags(selected);
-                        closePopup();
+                        closePopup(selected);
                     }}
                 />
             </div>

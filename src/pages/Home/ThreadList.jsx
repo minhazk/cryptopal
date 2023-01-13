@@ -15,7 +15,7 @@ const ThreadList = ({ threads, loading }) => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        updateUserTags(tags.map(tag => tag.id));
+        // updateUserTags(tags.map(tag => tag.id));
     }, [tags]);
 
     return (
