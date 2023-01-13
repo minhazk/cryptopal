@@ -13,11 +13,17 @@ const Home = () => {
     const { updateUserTags } = useUserContext();
     const { getAllThreads } = useThreadContext();
     const [threads, setThreads] = useState([]);
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
     useEffect(() => {
         if (user === null) return;
-        getAllThreads().then(setThreads);
+        getAllThreads()
+            .then(threads => {
+                setThreads(threads);
+                setLoading(false);
+            })
+            .catch(() => setLoading(false));
     }, [user]);
 
     return (
@@ -32,7 +38,7 @@ const Home = () => {
                 />
             )}
             <CreateForm setThreads={setThreads} />
-            <ThreadList threads={threads} />
+            <ThreadList threads={threads} loading={loading} />
         </Page>
     );
 };

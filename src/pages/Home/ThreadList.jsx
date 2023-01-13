@@ -6,8 +6,9 @@ import { useNavigate } from 'react-router-dom';
 import TagList from '../../components/TagList';
 import TagPicker from '../../components/TagPicker';
 import { useUserContext } from '../../context/UserContext';
+import SkeletonList from './SkeletonList';
 
-const ThreadList = ({ threads }) => {
+const ThreadList = ({ threads, loading }) => {
     const [tags, setTags] = useState([]);
     const [isEditingTags, setIsEditingTags] = useState(false);
     const { updateUserTags } = useUserContext();
@@ -37,11 +38,15 @@ const ThreadList = ({ threads }) => {
             </div>
 
             <div className='flex flex-col gap-4 mt-3 py-2'>
-                {threads.map(thread => (
-                    <div key={thread.id} onClick={() => navigate(`/thread/${thread.id}`)} className='hover:cursor-pointer'>
-                        <ThreadCard key={thread.id} {...thread} short />
-                    </div>
-                ))}
+                {loading ? (
+                    <SkeletonList count={5} />
+                ) : (
+                    threads.map(thread => (
+                        <div key={thread.id} onClick={() => navigate(`/thread/${thread.id}`)} className='hover:cursor-pointer'>
+                            <ThreadCard key={thread.id} {...thread} short />
+                        </div>
+                    ))
+                )}
             </div>
         </div>
     );

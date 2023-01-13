@@ -6,6 +6,7 @@ import CommentForm from './CommentForm';
 import { useThreadContext } from '../../context/ThreadContext';
 import CommentList from './CommentList';
 import { useUserContext } from '../../context/UserContext';
+import SkeletonThread from './SkeletonThread';
 
 const Thread = () => {
     const { id } = useParams();
@@ -33,7 +34,7 @@ const Thread = () => {
 
     return (
         <Page>
-            {thread && <ThreadCard {...thread} />}
+            {thread ? <ThreadCard {...thread} /> : <SkeletonThread />}
             <p className='font-semibold text-sm my-4'>Replies {comments !== null ? `(${comments.length})` : '(0)'}</p>
             <div className='flex flex-col gap-3'>
                 <CommentForm setComments={setComments} parentThreadId={id} />

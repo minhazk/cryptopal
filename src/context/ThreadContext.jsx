@@ -72,7 +72,9 @@ const ThreadProvider = ({ children }) => {
     async function getThreadById(id) {
         const docRef = doc(db, 'thread', id);
         const docSnap = await getDoc(docRef);
+        if (!docSnap.exists()) return null;
         const thread = docSnap.data();
+        console.log(thread);
         return {
             id,
             ...thread,
