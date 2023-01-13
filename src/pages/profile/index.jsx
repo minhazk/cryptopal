@@ -6,28 +6,33 @@ import AchievementCard from './AchievementCard';
 import Carousel from './Carousel';
 import RecentCommentCard from './RecentCommentCard';
 import StatCard from './StatCard';
-import { RiPencilFill } from 'react-icons/ri';
 import UserIcon from '../../components/UserIcon';
-import TagPicker from '../../components/TagPicker';
 import { useUserContext } from '../../context/UserContext';
 import Button from '../../components/ui/Button';
 import UploadAchievement from './UploadAchievement';
+import EditTags from '../../components/EditTags';
 
 const Profile = () => {
     const { id } = useParams();
-    const { user: loggedInUser, getUserById, userTags, updateUserTags, followUser, unfollowUser, getUserStats, isFollowing: isFollowingUser, getUserAchievements, getUserComments } = useUserContext();
+    const {
+        user: loggedInUser,
+        getUserById,
+        getUserTags,
+        updateUserTags,
+        followUser,
+        unfollowUser,
+        getUserStats,
+        isFollowing: isFollowingUser,
+        getUserAchievements,
+        getUserComments,
+    } = useUserContext();
     const [isOwner, setIsOwner] = useState(false);
-    const [tags, setTags] = useState(userTags);
-    const [isEditingTags, setIsEditingTags] = useState(false);
     const [user, setUser] = useState(null);
     const [isFollowing, setIsFollowing] = useState(true);
     const [userStats, setUserStats] = useState(null);
     const [recentComments, setRecentComments] = useState([]);
     const [achievements, setAchievements] = useState([]);
-
-    useEffect(() => {
-        updateUserTags(tags);
-    }, [tags]);
+    const [tags, setTags] = useState([]);
 
     useEffect(() => {
         if (loggedInUser === null) return;
@@ -40,7 +45,7 @@ const Profile = () => {
         getUserStats(id).then(setUserStats);
         getUserAchievements(id).then(setAchievements);
         getUserComments(id).then(setRecentComments);
-        setTags(userTags);
+        getUserTags(id).then(setTags);
     }, []);
 
     useEffect(() => {
@@ -81,16 +86,8 @@ const Profile = () => {
 
             <h2 className='mt-8 mb-3 font-medium lg:text-md'>Topics of interest</h2>
             <div className='flex gap-2 items-center'>
-                {userTags.length === 0 ? <p className='text-sm'>No categories selected</p> : <TagList tags={userTags} />}
-                {isOwner && (
-                    <button
-                        onClick={() => setIsEditingTags(prev => !prev)}
-                        className='border text-primary hover:bg-primary hover:text-white focus:bg-primary focus:text-white transition-colors border-primary aspect-square w-7 flex items-center justify-center rounded'
-                    >
-                        <RiPencilFill size={20} />
-                    </button>
-                )}
-                {isEditingTags && isOwner && <TagPicker tags={tags} setTags={setTags} closePopup={() => setIsEditingTags(false)} />}
+                {tags.length === 0 ? <p className='text-sm'>No categories selected</p> : <TagList tags={tags} />}
+                {isOwner && <EditTags onChange={updateUserTags} />}
             </div>
 
             <h2 className='mt-8 font-medium lg:text-md'>Recent Activity</h2>
@@ -113,7 +110,10 @@ const Profile = () => {
                     <p>This has user has not posted any achievements yet</p>
                 </div>
             ) : (
-                <Carousel cards={[...achievements.map(achievement => <AchievementCard key={achievement.id} {...achievement} />), isOwner ? <UploadAchievement key={-Infinity} /> : null]} />
+                <Carousel
+                    cards={[...achievements.map(achievement => <AchievementCard key={achievement.id} {...achievement} />), isOwner ? <UploadAchievement key={-Infinity} /> : null]}
+                    size={achievements.length}
+                />
             )}
         </Page>
     );

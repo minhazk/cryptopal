@@ -7,8 +7,9 @@ import UserIcon from '../UserIcon';
 import { useUserContext } from '../../context/UserContext';
 
 const SideProfile = ({ profileOpen, CUT_OFF }) => {
-    const { user, logout, userTags } = useUserContext();
+    const { user, logout, getUserTags } = useUserContext();
     const [position, setPosition] = useState(window.innerWidth < CUT_OFF ? (!profileOpen ? '-100%' : 0) : 'unset');
+    const [tags, setTags] = useState([]);
 
     useEffect(() => {
         setPosition(window.innerWidth < CUT_OFF ? (!profileOpen ? '-100%' : 0) : 'unset');
@@ -19,6 +20,11 @@ const SideProfile = ({ profileOpen, CUT_OFF }) => {
         window.addEventListener('resize', resize);
         return () => window.removeEventListener('resize', resize);
     }, []);
+
+    useEffect(() => {
+        if (user === null) return;
+        getUserTags(user.id).then(setTags);
+    }, [user]);
 
     const recentComments = [
         {
@@ -67,9 +73,9 @@ const SideProfile = ({ profileOpen, CUT_OFF }) => {
             <Link to='/about' className='bg-[#E0DBF6] text-accent font-semibold text-xs rounded-full py-[6px] px-3 transition-colors hover:bg-accent focus:bg-accent hover:text-white focus:text-white'>
                 {user?.points} points
             </Link>
-            {userTags.length > 0 && (
+            {tags.length > 0 && (
                 <div className='flex gap-2 mt-2'>
-                    <TagList tags={userTags} />
+                    <TagList tags={tags} />
                 </div>
             )}
             <h3 className='font-semibold text-center my-2 md:my-4 mb-2'>Recent Activity</h3>

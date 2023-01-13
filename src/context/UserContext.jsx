@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth, db, storage } from '../firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
-import { doc, getDoc, setDoc, getDocs, addDoc, collection, query, documentId, where, deleteDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, getDocs, addDoc, collection, query, documentId, where, deleteDoc, updateDoc } from 'firebase/firestore';
 import { ref, getDownloadURL, uploadBytes } from 'firebase/storage';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -11,8 +11,6 @@ const useUserContext = () => useContext(UserContext);
 
 const UserProvider = ({ children }) => {
     const [user, setUser] = useState(null);
-    const [userTags, setUserTags] = useState([]);
-    const [allTags, setAllTags] = useState([]);
     const navigate = useNavigate();
 
     const signUpUser = (displayName, email, password) =>
@@ -41,12 +39,16 @@ const UserProvider = ({ children }) => {
         });
     };
 
-    const updateUserTags = async tags => {
-        if (user === null) return;
-        await setDoc(doc(db, 'user_tag', user.id), {
-            interests: tags.map(tag => tag.id),
-        });
-        setUserTags(tags);
+    const updateUserTags = async tagIds => {
+        try {
+            const docRef = doc(db, 'user_tag', user.id);
+            await updateDoc(docRef, {
+                tag_ids: tagIds,
+            });
+        } catch (e) {
+            await setDoc(doc(db, 'user_tag', user.id), { tag_ids: tagIds });
+        }
+        return tagIds;
     };
 
     async function getAllTags() {
@@ -56,24 +58,24 @@ const UserProvider = ({ children }) => {
         querySnapshot.forEach(doc => {
             tags.push({ id: doc.id, ...doc.data() });
         });
-        setAllTags(tags);
+        return tags;
     }
 
-    async function getUserTags() {
-        if (user === null) return;
-        const docRef = doc(db, 'user_tag', user.id);
-        const docSnap = await getDoc(docRef);
-        if (!docSnap.exists()) return setUserTags([]);
-        const ids = docSnap.data().interests;
-        if (ids.length === 0) return setUserTags([]);
+    async function getUserTags(userId) {
+        const userTagRef = collection(db, 'user_tag');
+        const userTagQ = query(userTagRef, where(documentId(), '==', userId));
+        const userTagSnapshot = await getDocs(userTagQ);
+        if (userTagSnapshot.empty) return [];
+        const tagIds = userTagSnapshot.docs[0].data().tag_ids;
+        if (tagIds.length === 0) return [];
         const itemsRef = collection(db, 'tag');
-        const q = query(itemsRef, where(documentId(), 'in', ids));
+        const q = query(itemsRef, where(documentId(), 'in', tagIds));
         const querySnapshot = await getDocs(q);
         const tags = [];
         querySnapshot.forEach(doc => {
             tags.push({ id: doc.id, ...doc.data() });
         });
-        setUserTags(tags);
+        return tags;
     }
 
     async function getUserById(id) {
@@ -100,7 +102,6 @@ const UserProvider = ({ children }) => {
                     }
                     const user = docSnap.data();
                     setUser({ id: user.id, displayName: user.displayName, email: user.email, photoUrl: user.photoURL, points: user.points });
-                    getAllTags();
                 }
             });
     }, []);
@@ -145,11 +146,6 @@ const UserProvider = ({ children }) => {
         const querySnapshot = await getDocs(q);
         return !querySnapshot.empty;
     }
-
-    useEffect(() => {
-        if (user === null) return;
-        getUserTags();
-    }, [user]);
 
     async function getUserAchievements(id) {
         const itemsRef = collection(db, 'achievement');
@@ -210,13 +206,12 @@ const UserProvider = ({ children }) => {
         <UserContext.Provider
             value={{
                 user,
-                userTags,
                 signUpUser,
                 signInUser,
                 signInWithGoogle,
                 logout,
                 updateUserTags,
-                tags: allTags,
+                getAllTags,
                 getUserById,
                 getUserRank,
                 followUser,
@@ -226,6 +221,7 @@ const UserProvider = ({ children }) => {
                 getUserAchievements,
                 getUserComments,
                 createAchievement,
+                getUserTags,
             }}
         >
             {children}

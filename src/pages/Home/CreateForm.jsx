@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { AiOutlinePlus } from 'react-icons/ai';
-import { MdModeEditOutline } from 'react-icons/md';
 import Button from '../../components/ui/Button';
 import TagList from '../../components/TagList';
 import { useThreadContext } from '../../context/ThreadContext';
+import EditTags from '../../components/EditTags';
 
 const CreateForm = ({ setThreads }) => {
     const [title, setTitle] = useState('');
@@ -14,9 +14,10 @@ const CreateForm = ({ setThreads }) => {
     const { createThread } = useThreadContext();
 
     const handleCreateThread = () => {
+        if (tags.length === 0) return alert('Please provide some tags');
         createThread(title, body, tags.map(tag => tag.id) || [])
-            .then(thread => createLocalThread(thread))
-            .then(() => {
+            .then(thread => {
+                createLocalThread(thread);
                 setTitle('');
                 setBody('');
                 setTags([]);
@@ -27,6 +28,8 @@ const CreateForm = ({ setThreads }) => {
     function createLocalThread(thread) {
         setThreads(prev => [...prev, thread]);
     }
+
+    console.log(tags);
 
     return (
         <>
@@ -58,11 +61,9 @@ const CreateForm = ({ setThreads }) => {
 
                     <h4 className='font-medium text-sm'>Tags</h4>
                     <div className='flex items-center gap-10 mt-2'>
-                        <div className='overflow-x-auto'>
+                        <div className='overflow-x-auto flex gap-2'>
                             <TagList tags={tags} />
-                            <button className='border border-primary rounded p-1 pointer'>
-                                <MdModeEditOutline size={18} />
-                            </button>
+                            <EditTags onChange={setTags} />
                         </div>
                         <div className='ml-auto flex gap-2'>
                             <button

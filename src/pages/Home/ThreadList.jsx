@@ -5,19 +5,17 @@ import ThreadCard from '../../components/ThreadCard';
 import { useNavigate } from 'react-router-dom';
 import TagList from '../../components/TagList';
 import TagPicker from '../../components/TagPicker';
+import { useUserContext } from '../../context/UserContext';
 
 const ThreadList = ({ threads }) => {
     const [tags, setTags] = useState([]);
     const [isEditingTags, setIsEditingTags] = useState(false);
+    const { updateUserTags } = useUserContext();
     const navigate = useNavigate();
 
-    // useEffect(() => {
-    //     if (tags.length === 0) {
-    //         setThreads(allThreads);
-    //     } else {
-    //         setThreads(threads.filter(thread => thread.tags.some(tag => tags.some(t => t.id === tag.id))));
-    //     }
-    // }, [tags]);
+    useEffect(() => {
+        updateUserTags(tags.map(tag => tag.id));
+    }, [tags]);
 
     return (
         <div className='mt-5'>
@@ -38,7 +36,7 @@ const ThreadList = ({ threads }) => {
                 </div>
             </div>
 
-            <div className='flex flex-col gap-4 mt-4 py-2'>
+            <div className='flex flex-col gap-4 mt-3 py-2'>
                 {threads.map(thread => (
                     <div key={thread.id} onClick={() => navigate(`/thread/${thread.id}`)} className='hover:cursor-pointer'>
                         <ThreadCard key={thread.id} {...thread} short />

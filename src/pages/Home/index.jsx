@@ -10,6 +10,7 @@ import ThreadList from './ThreadList';
 const Home = () => {
     const { search } = useLocation();
     const { user } = useUserContext();
+    const { updateUserTags } = useUserContext();
     const { getAllThreads } = useThreadContext();
     const [threads, setThreads] = useState([]);
     const navigate = useNavigate();
@@ -24,7 +25,7 @@ const Home = () => {
             {search === '?signUp=true' && (
                 <TagPicker
                     setTags={tags => {
-                        // set the tags parameter in this func to the database user interests
+                        updateUserTags(tags.map(tag => tag.id));
                         navigate('/home');
                     }}
                     closePopup={() => navigate('/home')}

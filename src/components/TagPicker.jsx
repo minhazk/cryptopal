@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import TagList from './TagList';
 import Button from './ui/Button';
 import { BsArrowReturnLeft } from 'react-icons/bs';
@@ -7,9 +7,14 @@ import Tag from './ui/Tag';
 import { colours } from '../utils/colours';
 import { useUserContext } from '../context/UserContext';
 
-const TagPicker = ({ tags = [], setTags, closePopup }) => {
-    const { tags: allTags } = useUserContext();
+const TagPicker = ({ tags, setTags, closePopup }) => {
+    const { getAllTags } = useUserContext();
     const [selected, setSelected] = useState(tags);
+    const [allTags, setAllTags] = useState([]);
+
+    useEffect(() => {
+        getAllTags().then(setAllTags);
+    }, []);
 
     return (
         <div className='fixed top-0 left-0 inset-0 flex justify-center items-center z-[100]' style={{ backgroundColor: 'rgb(0 0 0 / .5)' }}>
