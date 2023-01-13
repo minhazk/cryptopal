@@ -66,7 +66,6 @@ const ThreadProvider = ({ children }) => {
                 vote: await getUserVote(threadDoc.id, 'thread'),
             });
         }
-        console.log(threads);
         return threads;
     }
 
@@ -171,6 +170,8 @@ const ThreadProvider = ({ children }) => {
         let deletedVote = false;
         let changingVote = false;
 
+        const multiplier = type === 'thread' ? 1 : type === 'comment' ? 2 : 3;
+
         const authorPoints = await getUserPoints(postAuthorId);
         const userRef = doc(db, 'user', postAuthorId);
 
@@ -180,20 +181,20 @@ const ThreadProvider = ({ children }) => {
                 [`${type}_id`]: postId,
                 vote: variation,
             });
-            await updateDoc(userRef, { points: authorPoints + (variation === 'upvote' ? 1 : -1) });
+            await updateDoc(userRef, { points: authorPoints + multiplier * (variation === 'upvote' ? 1 : -1) });
         } else {
             const postDoc = querySnapshot.docs[0];
             const { vote } = postDoc.data();
             if (vote === variation) {
                 await deleteDoc(doc(db, dbName, postDoc.id));
-                await updateDoc(userRef, { points: authorPoints + (variation === 'upvote' ? -1 : 1) });
+                await updateDoc(userRef, { points: authorPoints + multiplier + (variation === 'upvote' ? -1 : 1) });
                 deletedVote = true;
             } else {
                 const docRef = doc(db, dbName, postDoc.id);
                 await updateDoc(docRef, {
                     vote: vote === 'upvote' ? 'downvote' : 'upvote',
                 });
-                await updateDoc(userRef, { points: authorPoints + (variation === 'upvote' ? 2 : -2) });
+                await updateDoc(userRef, { points: authorPoints + multiplier + (variation === 'upvote' ? 2 : -2) });
                 changingVote = true;
             }
         }
@@ -203,16 +204,9 @@ const ThreadProvider = ({ children }) => {
         const post = docSnap.data();
         const userRank = getUserRank();
 
-        let alteration = variation === 'upvote' ? post[userRank] + 1 : post[userRank] - 1;
-        if (deletedVote) {
-            alteration = variation === 'upvote' ? post[userRank] - 1 : post[userRank] + 1;
-        } else if (changingVote) {
-            alteration = variation === 'upvote' ? post[userRank] + 2 : post[userRank] - 2;
-        }
-
-        await updateDoc(docRef, {
-            [userRank]: alteration,
-        });
+        const alterNum = deletedVote ? -1 : changingVote ? 2 : 1;
+        const alteration = variation === 'upvote' ? post[userRank] + alterNum : post[userRank] - alterNum;
+        await updateDoc(docRef, { [userRank]: alteration });
 
         return { postId, userRank, alteration, vote: deletedVote ? null : variation };
     }
