@@ -1,20 +1,28 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import TagList from './TagList';
+import React, { useEffect, useRef, useState } from 'react';
 import Button from './ui/Button';
 import { BsArrowReturnLeft } from 'react-icons/bs';
 import { MdClose } from 'react-icons/md';
 import Tag from './ui/Tag';
 import { colours } from '../utils/colours';
 import { useUserContext } from '../context/UserContext';
+import { useThreadContext } from '../context/ThreadContext';
 
-const TagPicker = ({ tags = [], closePopup }) => {
+const TagPicker = ({ tags = [], action, closePopup, allowCreate }) => {
     const { getAllTags } = useUserContext();
+    const { createTag } = useThreadContext();
     const [selected, setSelected] = useState(tags);
     const [allTags, setAllTags] = useState([]);
+    const createTagInputRef = useRef();
 
     useEffect(() => {
         getAllTags().then(setAllTags);
     }, []);
+
+    async function handleCreateTag() {
+        const value = createTagInputRef.current.value;
+        if (value === '' || value === null) return;
+        createTag(value.toUpperCase()).then(tag => setSelected(prev => [...prev, tag]));
+    }
 
     return (
         <div className='fixed top-0 left-0 inset-0 flex justify-center items-center z-[100]' style={{ backgroundColor: 'rgb(0 0 0 / .5)' }}>
@@ -23,7 +31,7 @@ const TagPicker = ({ tags = [], closePopup }) => {
                     <MdClose size={20} />
                 </button>
                 <h2 className='text-lg text-primary font-semibold'>Select topics of interest</h2>
-                <div className='flex gap-3 justify-center items-center flex-wrap'>
+                <div className='flex gap-2 justify-center items-center flex-wrap'>
                     {allTags.map(tag => (
                         <button
                             key={tag.id}
@@ -50,20 +58,24 @@ const TagPicker = ({ tags = [], closePopup }) => {
                             </button>
                         ))
                     )}
-                    <div className='relative'>
-                        <input
-                            placeholder='Enter new'
-                            className='text-xs py-[5px] pl-2 w-24 rounded outline-none transition-shadow duration-300 focus:shadow-[0_0_0_.175rem] focus:shadow-blue-300 border-2 border-primary pr-7'
-                        />
-                        <div className='absolute right-0 top-1/2 -translate-y-1/2 p-1 mr-1'>
-                            <BsArrowReturnLeft size={15} />
+                    {allowCreate && (
+                        <div className='relative'>
+                            <input
+                                ref={createTagInputRef}
+                                placeholder='Enter new'
+                                className='text-xs py-[5px] pl-2 w-28 rounded outline-none transition-shadow duration-300 focus:shadow-[0_0_0_.175rem] focus:shadow-blue-300 border-2 uppercase border-primary pr-7'
+                            />
+                            <button onClick={handleCreateTag} className='absolute right-0 top-1/2 -translate-y-1/2 p-1 mr-1'>
+                                <BsArrowReturnLeft size={15} />
+                            </button>
                         </div>
-                    </div>
+                    )}
                 </div>
                 <Button
                     label='Done'
                     onClick={() => {
-                        closePopup(selected);
+                        action(selected);
+                        closePopup();
                     }}
                 />
             </div>

@@ -68,7 +68,6 @@ const ThreadProvider = ({ children }) => {
     }
 
     async function getAllThreads(filter) {
-        console.log(filter);
         if (filter === undefined) {
             const q = query(collection(db, 'thread'));
             const querySnapshot = await getDocs(q);
@@ -108,6 +107,13 @@ const ThreadProvider = ({ children }) => {
             ...(await getAuthor(thread.authorId)),
             vote: await getUserVote(id, 'thread'),
         };
+    }
+
+    async function createTag(label) {
+        const color = 'hsla(' + ~~(360 * Math.random()) + ',' + '70%,' + '60%,1)';
+        const docRef = await addDoc(collection(db, 'tag'), { color, label });
+        const docSnap = await getDoc(docRef);
+        return { id: docSnap.id, ...docSnap.data() };
     }
 
     async function createComment(body, parentThreadId, parentCommentId) {
@@ -282,6 +288,7 @@ const ThreadProvider = ({ children }) => {
                 saveThread,
                 unSaveThread,
                 isThreadSaved,
+                createTag,
             }}
         >
             {children}

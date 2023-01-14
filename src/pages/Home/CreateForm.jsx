@@ -61,7 +61,7 @@ const CreateForm = ({ setThreads }) => {
                     <div className='flex items-center gap-10 mt-2'>
                         <div className='overflow-x-auto flex gap-2'>
                             <TagList tags={tags} />
-                            <EditTags setTags={setTags} tags={tags} />
+                            <EditTags setTags={setTags} tags={tags} allowCreate />
                         </div>
                         <div className='ml-auto flex gap-2'>
                             <button

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { RiPencilFill } from 'react-icons/ri';
 import TagPicker from './TagPicker';
 
-const EditTags = ({ onChange = () => null, setTags: setParentTags, tags: parentTags }) => {
+const EditTags = ({ onChange = () => null, setTags: setParentTags, tags: parentTags, allowCreate }) => {
     const [isEditingTags, setIsEditingTags] = useState(false);
 
     return (
@@ -16,11 +16,12 @@ const EditTags = ({ onChange = () => null, setTags: setParentTags, tags: parentT
             {isEditingTags && (
                 <TagPicker
                     tags={parentTags}
-                    closePopup={tags => {
+                    closePopup={() => setIsEditingTags(false)}
+                    action={tags => {
                         onChange(tags.map(tag => tag.id));
                         setParentTags(tags);
-                        setIsEditingTags(false);
                     }}
+                    allowCreate={allowCreate}
                 />
             )}
         </>
