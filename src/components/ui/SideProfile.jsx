@@ -45,7 +45,7 @@ const SideProfile = ({ profileOpen, CUT_OFF }) => {
                     <TagList tags={tags} />
                 </div>
             )}
-            <h3 className='font-semibold text-center my-2 md:my-4 mb-2'>Recent Activity</h3>
+            <h3 className='font-semibold text-center mt-2 md:mt-4 mb-2'>Recent Activity</h3>
             <div className='py-3 px-3 flex flex-col gap-2 rounded-md shadow-sm bg-[#E0DBF6] md:bg-white'>
                 {recentComments.map(comment => (
                     <Link key={comment.id} to={`/thread/${comment.parentThreadId}`} className='text-primary hover:underline text-[11px] flex gap-2 '>

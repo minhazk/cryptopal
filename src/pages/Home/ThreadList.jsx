@@ -1,22 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { RxGear } from 'react-icons/rx';
-import { BiSortAlt2 } from 'react-icons/bi';
 import ThreadCard from '../../components/ThreadCard';
 import { useNavigate } from 'react-router-dom';
 import TagList from '../../components/TagList';
 import TagPicker from '../../components/TagPicker';
-import { useUserContext } from '../../context/UserContext';
 import SkeletonList from './SkeletonList';
+import SortForm from './SortForm';
 
-const ThreadList = ({ threads, loading }) => {
+const ThreadList = ({ threads, setThreads, loading, filter }) => {
     const [tags, setTags] = useState([]);
     const [isEditingTags, setIsEditingTags] = useState(false);
-    const { updateUserTags } = useUserContext();
+    const [filtered, setFiltered] = useState(threads);
     const navigate = useNavigate();
 
     useEffect(() => {
-        // updateUserTags(tags.map(tag => tag.id));
-    }, [tags]);
+        if (tags.length === 0) return setFiltered(threads);
+        setFiltered(threads.filter(thread => thread.tagIds.some(id => tags.some(tag => tag.id === id))));
+    }, [tags, setThreads]);
+
+    useEffect(() => setTags([]), [filter]);
+
+    useEffect(() => setFiltered(threads), [threads]);
 
     return (
         <div className='mt-5'>
@@ -27,27 +31,28 @@ const ThreadList = ({ threads, loading }) => {
                     <button onClick={() => setIsEditingTags(prev => !prev)}>
                         <RxGear color='gray' />
                     </button>
-                    {isEditingTags && <TagPicker tags={tags} setTags={setTags} closePopup={() => setIsEditingTags(false)} />}
+                    {isEditingTags && <TagPicker tags={tags} setTags={setTags} action={tags => setTags(tags)} closePopup={() => setIsEditingTags(false)} />}
                 </div>
-                <div className=''>
-                    <button className='flex items-center gap-1 px-2'>
-                        <BiSortAlt2 color='gray' size={18} />
-                        <p className='text-xs text-gray-400'>Sort</p>
-                    </button>
-                </div>
+                <SortForm />
             </div>
 
-            <div className='flex flex-col gap-4 mt-3 py-2'>
-                {loading ? (
-                    <SkeletonList count={5} />
-                ) : (
-                    threads.map(thread => (
-                        <div key={thread.id} onClick={() => navigate(`/thread/${thread.id}`)} className='hover:cursor-pointer'>
-                            <ThreadCard key={thread.id} {...thread} short />
-                        </div>
-                    ))
-                )}
-            </div>
+            {!loading && threads.length === 0 ? (
+                <div className='flex justify-center items-center h-[300px]'>
+                    <p className='text-sm text-gray-400'>No posts found</p>
+                </div>
+            ) : (
+                <div className='flex flex-col gap-4 mt-3 py-2'>
+                    {loading ? (
+                        <SkeletonList count={5} />
+                    ) : (
+                        filtered.map(thread => (
+                            <div key={thread.id} onClick={() => navigate(`/thread/${thread.id}`)} className='hover:cursor-pointer'>
+                                <ThreadCard key={thread.id} {...thread} short />
+                            </div>
+                        ))
+                    )}
+                </div>
+            )}
         </div>
     );
 };

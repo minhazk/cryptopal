@@ -39,13 +39,7 @@ const Home = ({ filter }) => {
                 />
             )}
             <CreateForm setThreads={setThreads} />
-            {!loading && threads.length === 0 ? (
-                <div className='flex justify-center items-center h-full'>
-                    <p className='text-sm text-gray-400'>No posts found</p>
-                </div>
-            ) : (
-                <ThreadList threads={threads} loading={loading} />
-            )}
+            <ThreadList threads={threads} setThreads={setThreads} loading={loading} filter={filter} />
         </Page>
     );
 };
