@@ -18,13 +18,15 @@ const Home = ({ filter }) => {
 
     useEffect(() => {
         if (user === null) return;
-        getAllThreads(filter)
-            .then(threads => {
-                setThreads(threads);
-                setLoading(false);
-            })
-            .catch(() => setLoading(false));
+        getAllThreads(filter).then(threads => {
+            setThreads(threads);
+            setLoading(false);
+        });
     }, [user, filter]);
+
+    useEffect(() => {
+        setLoading(true);
+    }, [filter]);
 
     return (
         <Page>
@@ -37,7 +39,13 @@ const Home = ({ filter }) => {
                 />
             )}
             <CreateForm setThreads={setThreads} />
-            <ThreadList threads={threads} loading={loading} />
+            {!loading && threads.length === 0 ? (
+                <div className='flex justify-center items-center h-full'>
+                    <p className='text-sm text-gray-400'>No posts found</p>
+                </div>
+            ) : (
+                <ThreadList threads={threads} loading={loading} />
+            )}
         </Page>
     );
 };
