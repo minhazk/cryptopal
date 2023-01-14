@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth, db, storage } from '../firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
-import { doc, getDoc, setDoc, getDocs, addDoc, collection, query, documentId, where, deleteDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, getDocs, addDoc, collection, query, documentId, where, deleteDoc, updateDoc, limit, orderBy } from 'firebase/firestore';
 import { ref, getDownloadURL, uploadBytes } from 'firebase/storage';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -171,7 +171,7 @@ const UserProvider = ({ children }) => {
 
     async function getUserComments(id) {
         const itemsRef = collection(db, 'comment');
-        const q = query(itemsRef, where('authorId', '==', id), where('parentCommentId', '==', null));
+        const q = query(itemsRef, where('authorId', '==', id), where('parentCommentId', '==', null), limit(4), orderBy('timestamp', 'desc'));
         const querySnapshot = await getDocs(q);
         const comments = [];
         for await (const comment of querySnapshot.docs) {

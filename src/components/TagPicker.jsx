@@ -7,7 +7,7 @@ import Tag from './ui/Tag';
 import { colours } from '../utils/colours';
 import { useUserContext } from '../context/UserContext';
 
-const TagPicker = ({ tags, closePopup }) => {
+const TagPicker = ({ tags = [], closePopup }) => {
     const { getAllTags } = useUserContext();
     const [selected, setSelected] = useState(tags);
     const [allTags, setAllTags] = useState([]);

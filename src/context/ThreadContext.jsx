@@ -51,11 +51,9 @@ const ThreadProvider = ({ children }) => {
         return tags;
     }
 
-    async function getAllThreads() {
-        const q = query(collection(db, 'thread'));
-        const querySnapshot = await getDocs(q);
+    async function formatThreads(snapshot) {
         const threads = [];
-        for await (const threadDoc of querySnapshot.docs) {
+        for await (const threadDoc of snapshot.docs) {
             const { authorId, timestamp, tagIds } = threadDoc.data();
             threads.push({
                 ...threadDoc.data(),
@@ -67,6 +65,34 @@ const ThreadProvider = ({ children }) => {
             });
         }
         return threads;
+    }
+
+    async function getAllThreads(filter) {
+        console.log(filter);
+        if (filter === undefined) {
+            const q = query(collection(db, 'thread'));
+            const querySnapshot = await getDocs(q);
+            return await formatThreads(querySnapshot);
+        } else if (filter === 'user') {
+            const q = query(collection(db, 'thread'), where('authorId', '==', user.id));
+            const querySnapshot = await getDocs(q);
+            return await formatThreads(querySnapshot);
+        } else if (filter === 'following') {
+            const filterQ = query(collection(db, 'relationship'), where('followerId', '==', user.id));
+            const followingSnapshot = await getDocs(filterQ);
+            const userIds = followingSnapshot.docs.map(doc => doc.data().followingId);
+            const q = query(collection(db, 'thread'));
+            const querySnapshot = await getDocs(q);
+            return (await formatThreads(querySnapshot)).filter(thread => userIds.some(id => thread.authorId === id));
+        } else if (filter === 'saved') {
+            const filterQ = query(collection(db, 'saved'), where('userId', '==', user.id));
+            const savedSnapshot = await getDocs(filterQ);
+            const threadIds = savedSnapshot.docs.map(doc => doc.data().threadId);
+            const q = query(collection(db, 'thread'));
+            const querySnapshot = await getDocs(q);
+            return (await formatThreads(querySnapshot)).filter(thread => threadIds.some(id => thread.id === id));
+        }
+        return [];
     }
 
     async function getThreadById(id) {
@@ -169,7 +195,6 @@ const ThreadProvider = ({ children }) => {
         const querySnapshot = await getDocs(q);
         let deletedVote = false;
         let changingVote = false;
-
         const multiplier = type === 'thread' ? 1 : type === 'comment' ? 2 : 3;
 
         const authorPoints = await getUserPoints(postAuthorId);

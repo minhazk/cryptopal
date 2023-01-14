@@ -7,7 +7,7 @@ import { useUserContext } from '../../context/UserContext';
 import CreateForm from './CreateForm';
 import ThreadList from './ThreadList';
 
-const Home = () => {
+const Home = ({ filter }) => {
     const { search } = useLocation();
     const { user } = useUserContext();
     const { updateUserTags } = useUserContext();
@@ -18,23 +18,22 @@ const Home = () => {
 
     useEffect(() => {
         if (user === null) return;
-        getAllThreads()
+        getAllThreads(filter)
             .then(threads => {
                 setThreads(threads);
                 setLoading(false);
             })
             .catch(() => setLoading(false));
-    }, [user]);
+    }, [user, filter]);
 
     return (
         <Page>
             {search === '?signUp=true' && (
                 <TagPicker
-                    setTags={tags => {
+                    closePopup={tags => {
                         updateUserTags(tags.map(tag => tag.id));
                         navigate('/home');
                     }}
-                    closePopup={() => navigate('/home')}
                 />
             )}
             <CreateForm setThreads={setThreads} />

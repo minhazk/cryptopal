@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useUserContext } from '../../context/UserContext';
 import TagList from '../TagList';
 
 const Sidebar = ({ burgerOpen, CUT_OFF }) => {
     const [position, setPosition] = useState(window.innerWidth < CUT_OFF ? (!burgerOpen ? '-100%' : 0) : 'unset');
-    const { tags } = useUserContext();
-    const navigate = useNavigate();
+    const { getAllTags } = useUserContext();
+    const [allTags, setAllTags] = useState([]);
+
+    useEffect(() => {
+        getAllTags().then(setAllTags);
+    }, []);
 
     useEffect(() => {
         setPosition(window.innerWidth < CUT_OFF ? (!burgerOpen ? '-100%' : 0) : 'unset');
@@ -28,19 +32,19 @@ const Sidebar = ({ burgerOpen, CUT_OFF }) => {
                     <Link to='/home'>Home</Link>
                 </li>
                 <li>
-                    <Link to='/your threads'>Your Threads</Link>
+                    <Link to='/home/my_threads'>Your Threads</Link>
                 </li>
                 <li>
-                    <Link to='/saved'>Saved</Link>
+                    <Link to='/home/saved'>Saved</Link>
                 </li>
                 <li>
-                    <Link to='/following'>Following</Link>
+                    <Link to='/home/following'>Following</Link>
                 </li>
             </ul>
 
             <h3 className='font-semibold text-center my-8 mb-4 md:mb-2'>Popular Tags</h3>
             <div className='flex gap-3 md:gap-2 flex-wrap'>
-                <TagList tags={tags} />
+                <TagList tags={allTags} />
             </div>
         </aside>
     );

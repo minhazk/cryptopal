@@ -7,9 +7,10 @@ import UserIcon from '../UserIcon';
 import { useUserContext } from '../../context/UserContext';
 
 const SideProfile = ({ profileOpen, CUT_OFF }) => {
-    const { user, logout, getUserTags } = useUserContext();
+    const { user, logout, getUserTags, getUserComments } = useUserContext();
     const [position, setPosition] = useState(window.innerWidth < CUT_OFF ? (!profileOpen ? '-100%' : 0) : 'unset');
     const [tags, setTags] = useState([]);
+    const [recentComments, setRecentComments] = useState([]);
 
     useEffect(() => {
         setPosition(window.innerWidth < CUT_OFF ? (!profileOpen ? '-100%' : 0) : 'unset');
@@ -24,42 +25,8 @@ const SideProfile = ({ profileOpen, CUT_OFF }) => {
     useEffect(() => {
         if (user === null) return;
         getUserTags(user.id).then(setTags);
+        getUserComments(user.id).then(setRecentComments);
     }, [user]);
-
-    const recentComments = [
-        {
-            id: 123123,
-            body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, Ipsum sit amet',
-            bronze: 2,
-            silver: 7,
-            gold: 11,
-            parentId: 12,
-        },
-        {
-            id: 2312,
-            body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit,',
-            bronze: 2,
-            silver: 7,
-            gold: 11,
-            parentId: 12,
-        },
-        {
-            id: 323123,
-            body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, Ipsum sit amet',
-            bronze: 2,
-            silver: 7,
-            gold: 11,
-            parentId: 12,
-        },
-        {
-            id: 4123,
-            body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, Lorem ipsum dolor sit amet, consectetur adipiscing elit,',
-            bronze: 2,
-            silver: 7,
-            gold: 11,
-            parentId: 12,
-        },
-    ];
 
     return (
         <aside
@@ -74,14 +41,14 @@ const SideProfile = ({ profileOpen, CUT_OFF }) => {
                 {user?.points} points
             </Link>
             {tags.length > 0 && (
-                <div className='flex gap-2 mt-2'>
+                <div className='flex gap-2 mt-2 flex-wrap justify-center'>
                     <TagList tags={tags} />
                 </div>
             )}
             <h3 className='font-semibold text-center my-2 md:my-4 mb-2'>Recent Activity</h3>
             <div className='py-3 px-3 flex flex-col gap-2 rounded-md shadow-sm bg-[#E0DBF6] md:bg-white'>
                 {recentComments.map(comment => (
-                    <Link key={comment.id} to={`/thread/${comment.parentId}`} className='text-primary hover:underline text-[11px] flex gap-2 '>
+                    <Link key={comment.id} to={`/thread/${comment.parentThreadId}`} className='text-primary hover:underline text-[11px] flex gap-2 '>
                         <div className='flex items-center'>
                             <BsArrowReturnRight size={15} />
                         </div>
