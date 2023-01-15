@@ -24,7 +24,7 @@ const Page = ({ children, hideSideProfile }) => {
 
     return (
         <>
-            <Header setBurgerOpen={setBurgerOpen} burgerOpen={burgerOpen} profileOpen={profileOpen} setProfileOpen={setProfileOpen} hideSideProfile={hideSideProfile} />
+            <Header setBurgerOpen={setBurgerOpen} burgerOpen={burgerOpen} profileOpen={profileOpen} setProfileOpen={setProfileOpen} hideSideProfile={hideSideProfile} CUT_OFF={CUT_OFF} />
             <div className='mx-auto px-5 pb-10 flex lg:max-w-[85%] xl:max-w-[1300px]'>
                 <Sidebar burgerOpen={burgerOpen} CUT_OFF={CUT_OFF} />
                 <div className='grow'>{children}</div>

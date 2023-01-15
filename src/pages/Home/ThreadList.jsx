@@ -16,7 +16,7 @@ const ThreadList = ({ threads, setThreads, loading, filter }) => {
     useEffect(() => {
         if (tags.length === 0) return setFiltered(threads);
         setFiltered(threads.filter(thread => thread.tagIds.some(id => tags.some(tag => tag.id === id))));
-    }, [tags, setThreads]);
+    }, [tags, setThreads, setFiltered]);
 
     useEffect(() => setTags([]), [filter]);
 
@@ -33,7 +33,7 @@ const ThreadList = ({ threads, setThreads, loading, filter }) => {
                     </button>
                     {isEditingTags && <TagPicker tags={tags} setTags={setTags} action={tags => setTags(tags)} closePopup={() => setIsEditingTags(false)} />}
                 </div>
-                <SortForm />
+                <SortForm setThreads={setFiltered} />
             </div>
 
             {!loading && threads.length === 0 ? (

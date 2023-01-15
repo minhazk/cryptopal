@@ -1,10 +1,22 @@
 import React, { useState } from 'react';
 import { BiSortAlt2 } from 'react-icons/bi';
 
-const SortForm = () => {
+const SortForm = ({ setThreads }) => {
     const [isSelecting, setIsSelecting] = useState(false);
 
-    function handleSelect() {
+    function handleSelect(type) {
+        setThreads(prev => {
+            switch (type) {
+                case 'High':
+                    return prev.sort((a, b) => a.bronze + a.silver + a.gold - (b.bronze + b.silver + b.gold));
+                case 'Old to New':
+                    return prev.sort((a, b) => a.timestamp - b.timestamp);
+                case 'New to Old':
+                    return prev.sort((a, b) => b.timestamp - a.timestamp);
+                default:
+                    return prev;
+            }
+        });
         setIsSelecting(false);
     }
 
@@ -16,13 +28,13 @@ const SortForm = () => {
             </button>
             {isSelecting && (
                 <div className='absolute right-0 top-full mt-4 shadow-md text-xs bg-white w-fit flex flex-col rounded-lg border border-primary overflow-hidden'>
-                    <button onClick={() => handleSelect()} className='whitespace-nowrap px-7 py-2 hover:bg-gray-200 transition-colors'>
+                    <button onClick={() => handleSelect('High')} className='whitespace-nowrap px-7 py-2 hover:bg-gray-200 transition-colors'>
                         Top Rated
                     </button>
-                    <button onClick={() => handleSelect()} className='whitespace-nowrap px-7 py-2 hover:bg-gray-200 transition-colors'>
+                    <button onClick={() => handleSelect('Old to New')} className='whitespace-nowrap px-7 py-2 hover:bg-gray-200 transition-colors'>
                         Oldest - Newest
                     </button>
-                    <button onClick={() => handleSelect()} className='whitespace-nowrap px-7 py-2 hover:bg-gray-200 transition-colors'>
+                    <button onClick={() => handleSelect('New to Old')} className='whitespace-nowrap px-7 py-2 hover:bg-gray-200 transition-colors'>
                         Newest - Oldest
                     </button>
                 </div>

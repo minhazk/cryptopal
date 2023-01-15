@@ -6,7 +6,7 @@ import { CgClose } from 'react-icons/cg';
 import { Link } from 'react-router-dom';
 import { useUserContext } from '../../context/UserContext';
 
-const Header = ({ setBurgerOpen, burgerOpen, profileOpen, setProfileOpen, hideSideProfile }) => {
+const Header = ({ setBurgerOpen, burgerOpen, profileOpen, setProfileOpen, hideSideProfile, CUT_OFF }) => {
     const { user } = useUserContext();
 
     return (
@@ -23,7 +23,7 @@ const Header = ({ setBurgerOpen, burgerOpen, profileOpen, setProfileOpen, hideSi
                     <Link to='/messaging'>
                         <AiOutlineMessage className='md:hidden' />
                     </Link>
-                    <button onClick={() => !hideSideProfile && setProfileOpen(prev => !prev)}>{!profileOpen ? <AiOutlineUser /> : <CgClose />}</button>
+                    <button onClick={() => !hideSideProfile && window.innerWidth < CUT_OFF && setProfileOpen(prev => !prev)}>{!profileOpen ? <AiOutlineUser /> : <CgClose />}</button>
                 </IconContext.Provider>
             </div>
         </header>
