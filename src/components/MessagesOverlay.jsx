@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import OverlayWrapper from './OverlayWrapper';
 import DmCard from './DmCard';
 import Chat from './Chat';
@@ -9,27 +9,15 @@ import { FiMaximize2 } from 'react-icons/fi';
 import { useUserContext } from '../context/UserContext';
 
 const MessagesOverlay = () => {
-    const { user } = useUserContext();
+    const { user, getFollowers } = useUserContext();
     const [activeOverlay, setActiveOverlay] = useState(false);
-    const [minimizeChat, setMinimizeChat] = useState(true);
     const [activeChat, setActiveChat] = useState(null);
+    const [recentChats, setRecentChats] = useState([]);
 
-    const dummyChats = [
-        {
-            id: 123123,
-            imgUrl: 'https://source.unsplash.com/random/4',
-            name: 'Minhaz Karim',
-            lastMessage: 'Lorem Ipsum is simply dummy text',
-            timestamp: new Date(),
-        },
-        {
-            id: 23423,
-            imgUrl: 'https://source.unsplash.com/random/5',
-            name: 'Mina',
-            lastMessage: 'Lorem Ipsum is simply dummy text',
-            timestamp: new Date(),
-        },
-    ];
+    useEffect(() => {
+        if (user === null) return;
+        getFollowers().then(setRecentChats);
+    }, []);
 
     const chat = [
         {
@@ -49,16 +37,16 @@ const MessagesOverlay = () => {
     ];
 
     return (
-        <div className='fixed bottom-0 right-[5%] flex gap-5 z-[50]' style={{ pointerEvents: activeChat ? 'auto' : 'none' }}>
+        <div className='fixed right-[5%] flex gap-5 z-[50] transition-all duration-300' style={{ bottom: activeOverlay ? '-276px' : '0' }}>
             {activeChat && (
                 <OverlayWrapper
-                    iconUrl={activeChat.imgUrl}
+                    iconUrl={activeChat.photoURL}
                     title={activeChat.recipient}
-                    activeOverlay={minimizeChat}
+                    recipientId={activeChat.recipientId}
                     action={
                         <div className='flex items-center gap-2'>
-                            <button onClick={() => setMinimizeChat(prev => !prev)}>{minimizeChat ? <FaRegWindowMinimize /> : <FiMaximize2 size={20} />}</button>
-                            <button onClick={() => setActiveChat(null) && setMinimizeChat(false)}>
+                            <button onClick={() => setActiveOverlay(prev => !prev)}>{activeOverlay ? <FaRegWindowMinimize /> : <FiMaximize2 size={20} />}</button>
+                            <button onClick={() => setActiveChat(null)}>
                                 <IoMdClose size={25} />
                             </button>
                         </div>
@@ -69,7 +57,7 @@ const MessagesOverlay = () => {
             )}
 
             <OverlayWrapper
-                iconUrl={user?.photoUrl}
+                iconUrl={user?.photoURL}
                 title='Messaging'
                 activeOverlay={activeOverlay}
                 action={
@@ -79,7 +67,7 @@ const MessagesOverlay = () => {
                 }
             >
                 <div className='flex flex-col overflow-y-auto h-full'>
-                    {dummyChats.map(chat => (
+                    {recentChats.map(chat => (
                         <DmCard key={chat.id} {...chat} setActiveChat={setActiveChat} />
                     ))}
                 </div>

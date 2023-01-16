@@ -51,8 +51,10 @@ const UserProvider = ({ children }) => {
         return tagIds;
     };
 
-    async function getAllTags() {
-        const q = query(collection(db, 'tag'));
+    async function getAllTags(limited) {
+        let q;
+        if (limited) q = query(collection(db, 'tag'), limit(8));
+        else q = query(collection(db, 'tag'));
         const querySnapshot = await getDocs(q);
         const tags = [];
         querySnapshot.forEach(doc => {
@@ -202,6 +204,23 @@ const UserProvider = ({ children }) => {
         });
     }
 
+    async function getFollowers() {
+        const followersRef = collection(db, 'relationship');
+        const followersQ = query(followersRef, where('followerId', '==', user.id));
+        const followersSnapshot = await getDocs(followersQ);
+        if (followersSnapshot.empty) return [];
+
+        const followerIds = followersSnapshot.docs.map(doc => doc.data().followingId);
+
+        const usersRef = collection(db, 'user');
+        const usersQ = query(usersRef, where(documentId(), 'in', followerIds));
+        const usersSnapshot = await getDocs(usersQ);
+
+        return usersSnapshot.docs.map(doc => {
+            return { id: doc.id, ...doc.data() };
+        });
+    }
+
     return (
         <UserContext.Provider
             value={{
@@ -222,6 +241,7 @@ const UserProvider = ({ children }) => {
                 getUserComments,
                 createAchievement,
                 getUserTags,
+                getFollowers,
             }}
         >
             {children}

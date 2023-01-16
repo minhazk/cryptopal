@@ -9,7 +9,7 @@ const Sidebar = ({ burgerOpen, CUT_OFF }) => {
     const [allTags, setAllTags] = useState([]);
 
     useEffect(() => {
-        getAllTags().then(setAllTags);
+        getAllTags('limited').then(setAllTags);
     }, []);
 
     useEffect(() => {

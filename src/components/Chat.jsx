@@ -1,11 +1,12 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { MdSend } from 'react-icons/md';
 import { colours } from '../utils/colours';
 import { formatTime } from '../utils/TimeFormatter';
 import UserIcon from './UserIcon';
 
-const Chat = ({ chat }) => {
+const Chat = ({ recipientId }) => {
     const ref = useRef();
+    const [chat, setChat] = useState([]);
 
     useEffect(() => {
         ref.current.scrollIntoView();
