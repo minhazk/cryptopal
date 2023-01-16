@@ -1,16 +1,29 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { MdSend } from 'react-icons/md';
+import { useUserContext } from '../context/UserContext';
 import { colours } from '../utils/colours';
 import { formatTime } from '../utils/TimeFormatter';
 import UserIcon from './UserIcon';
 
 const Chat = ({ recipientId }) => {
     const ref = useRef();
+    const { user, getChat, sendMessage } = useUserContext();
     const [chat, setChat] = useState([]);
+    const inputRef = useRef();
 
     useEffect(() => {
-        ref.current.scrollIntoView();
-    });
+        if (user === null) return;
+        getChat(recipientId)
+            .then(setChat)
+            .finally(() => ref.current.scrollIntoView());
+    }, []);
+
+    async function handleSubmit(e) {
+        e.preventDefault();
+        const body = inputRef.current.value;
+        if (body === '' || body === null) return;
+        sendMessage(recipientId, body).then(msg => setChat(prev => [...prev, msg]));
+    }
 
     return (
         <>
@@ -21,19 +34,19 @@ const Chat = ({ recipientId }) => {
                 ))}
                 <div ref={ref} />
             </div>
-            <div className='flex items-center gap-1 py-2 pl-2 pr-1'>
+            <form handleSubmit={handleSubmit} className='flex items-center gap-1 py-2 pl-2 pr-1'>
                 <div className='grow'>
-                    <input className='w-full text-xs py-[6px] px-2 rounded border border-gray-300 outline-none' autoFocus />
+                    <input ref={inputRef} className='w-full text-xs py-[6px] px-2 rounded border border-gray-300 outline-none' autoFocus />
                 </div>
-                <button className='p-1 hover:bg-gray-100 transition-colors'>
+                <button type='submit' className='p-1 hover:bg-gray-100 transition-colors'>
                     <MdSend size={20} />
                 </button>
-            </div>
+            </form>
         </>
     );
 };
 
-function ChatMessage({ name, imgUrl, message, timestamp }) {
+function ChatMessage({ displayName: name, imgUrl, body: message, timestamp }) {
     const currentUser = 'John Doe';
 
     return (

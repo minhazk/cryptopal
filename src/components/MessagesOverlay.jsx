@@ -19,23 +19,6 @@ const MessagesOverlay = () => {
         getFollowers().then(setRecentChats);
     }, []);
 
-    const chat = [
-        {
-            id: 12312,
-            name: 'John Doe',
-            imgUrl: 'https://source.unsplash.com/random/3',
-            message: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. ',
-            timestamp: new Date(),
-        },
-        {
-            id: 23213,
-            name: 'Minhaz Karim',
-            imgUrl: 'https://source.unsplash.com/random/4',
-            message: 'Type a Lorem Ipsum is simply dummy text of the printing.',
-            timestamp: new Date(),
-        },
-    ];
-
     return (
         <div className='fixed right-[5%] flex gap-5 z-[50] transition-all duration-300' style={{ bottom: activeOverlay ? '-276px' : '0' }}>
             {activeChat && (
@@ -52,7 +35,7 @@ const MessagesOverlay = () => {
                         </div>
                     }
                 >
-                    <Chat chat={chat} />
+                    <Chat recipientId={activeChat.recipientId} />
                 </OverlayWrapper>
             )}
 

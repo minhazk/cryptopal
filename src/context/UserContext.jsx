@@ -221,6 +221,29 @@ const UserProvider = ({ children }) => {
         });
     }
 
+    async function getChat(recipientId) {
+        const docRef = collection(db, 'message');
+        const q = query(docRef, where('senderId', '==', user.id), where('senderId', '==', recipientId));
+        const querySnapshot = await getDocs(q);
+        return querySnapshot.docs.map(doc => {
+            return { id: doc.id, ...doc.data() };
+        });
+    }
+
+    async function sendMessage(recipientId, body) {
+        const id = uuidv4();
+        const message = {
+            senderId: user.id,
+            recipientId,
+            displayName: user.displayName,
+            imgUrl: user.photoURL,
+            body,
+            timestamp: new Date(),
+        };
+        setDoc(doc(db, 'message', id), message);
+        return { id, ...message };
+    }
+
     return (
         <UserContext.Provider
             value={{
@@ -242,6 +265,8 @@ const UserProvider = ({ children }) => {
                 createAchievement,
                 getUserTags,
                 getFollowers,
+                getChat,
+                sendMessage,
             }}
         >
             {children}
