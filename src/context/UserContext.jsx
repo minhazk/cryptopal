@@ -205,17 +205,19 @@ const UserProvider = ({ children }) => {
     }
 
     async function getFollowers() {
-        const followersRef = collection(db, 'relationship');
-        const followersQ = query(followersRef, where('followerId', '==', user.id));
+        const relationshipRef = collection(db, 'relationship');
+        const followersQ = query(relationshipRef, where('followerId', '==', user.id));
         const followersSnapshot = await getDocs(followersQ);
-        if (followersSnapshot.empty) return [];
 
-        const followerIds = followersSnapshot.docs.map(doc => doc.data().followingId);
+        const followingQ = query(relationshipRef, where('followingId', '==', user.id));
+        const followingSnapshot = await getDocs(followingQ);
+        if (followersSnapshot.empty && followingSnapshot.empty) return [];
+
+        const ids = [...new Set([...followersSnapshot.docs.map(doc => doc.data().followingId), ...followingSnapshot.docs.map(doc => doc.data().followerId)])].filter(id => id !== user.id);
 
         const usersRef = collection(db, 'user');
-        const usersQ = query(usersRef, where(documentId(), 'in', followerIds));
+        const usersQ = query(usersRef, where(documentId(), 'in', ids));
         const usersSnapshot = await getDocs(usersQ);
-
         return usersSnapshot.docs.map(doc => {
             return { id: doc.id, ...doc.data() };
         });
@@ -223,11 +225,22 @@ const UserProvider = ({ children }) => {
 
     async function getChat(recipientId) {
         const docRef = collection(db, 'message');
-        const q = query(docRef, where('senderId', '==', user.id), where('senderId', '==', recipientId));
-        const querySnapshot = await getDocs(q);
-        return querySnapshot.docs.map(doc => {
-            return { id: doc.id, ...doc.data() };
-        });
+        const ids = [user.id, recipientId];
+        const q1 = query(docRef, where('senderId', '==', user.id), where('recipientId', '==', recipientId));
+        const q2 = query(docRef, where('recipientId', '==', user.id), where('senderId', '==', recipientId));
+        const senderSnapshot = await getDocs(q1);
+        const recipientSnapshot = await getDocs(q2);
+        const senderMsgs = senderSnapshot.empty
+            ? []
+            : senderSnapshot.docs.map(doc => {
+                  return { id: doc.id, ...doc.data(), timestamp: doc.data().timestamp.seconds * 1000 };
+              });
+        const recipientMsgs = recipientSnapshot.empty
+            ? []
+            : recipientSnapshot.docs.map(doc => {
+                  return { id: doc.id, ...doc.data(), timestamp: doc.data().timestamp.seconds * 1000 };
+              });
+        return [...new Map([...senderMsgs, ...recipientMsgs].map(msg => [msg.id, msg])).values()].sort((a, b) => a.timestamp - b.timestamp);
     }
 
     async function sendMessage(recipientId, body) {
@@ -236,7 +249,6 @@ const UserProvider = ({ children }) => {
             senderId: user.id,
             recipientId,
             displayName: user.displayName,
-            imgUrl: user.photoURL,
             body,
             timestamp: new Date(),
         };

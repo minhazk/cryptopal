@@ -30,14 +30,7 @@ const Home = ({ filter }) => {
 
     return (
         <Page>
-            {search === '?signUp=true' && (
-                <TagPicker
-                    closePopup={tags => {
-                        updateUserTags(tags.map(tag => tag.id));
-                        navigate('/home');
-                    }}
-                />
-            )}
+            {search === '?signUp=true' && <TagPicker action={tags => updateUserTags(tags.map(tag => tag.id))} closePopup={() => navigate('/home')} />}
             <CreateForm setThreads={setThreads} />
             <ThreadList threads={threads} setThreads={setThreads} loading={loading} filter={filter} />
         </Page>
