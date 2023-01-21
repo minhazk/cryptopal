@@ -9,30 +9,6 @@ const Messaging = () => {
     const [activeChat, setActiveChat] = useState(null);
     const { recentChats } = useMessaging();
 
-    const chat = [
-        {
-            id: 12312,
-            name: 'John Doe',
-            imgUrl: 'https://source.unsplash.com/random/3',
-            message: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. ',
-            timestamp: new Date(),
-        },
-        {
-            id: 23213,
-            name: 'Minhaz Karim',
-            imgUrl: 'https://source.unsplash.com/random/4',
-            message: 'Type a Lorem Ipsum is simply dummy text of the printing.',
-            timestamp: new Date(),
-        },
-        {
-            id: 3213,
-            name: 'John Doe',
-            imgUrl: 'https://source.unsplash.com/random/3',
-            message: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. ',
-            timestamp: new Date(),
-        },
-    ];
-
     return (
         <Page>
             {!activeChat ? (
