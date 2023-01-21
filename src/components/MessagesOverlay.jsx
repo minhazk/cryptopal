@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import OverlayWrapper from './OverlayWrapper';
 import DmCard from './DmCard';
 import Chat from './Chat';
@@ -7,17 +7,13 @@ import { HiOutlineChevronUp, HiOutlineChevronDown } from 'react-icons/hi';
 import { FaRegWindowMinimize } from 'react-icons/fa';
 import { FiMaximize2 } from 'react-icons/fi';
 import { useUserContext } from '../context/UserContext';
+import useMessaging from '../hooks/useMessaging';
 
 const MessagesOverlay = () => {
-    const { user, getFollowers } = useUserContext();
+    const { user } = useUserContext();
     const [activeOverlay, setActiveOverlay] = useState(false);
     const [activeChat, setActiveChat] = useState(null);
-    const [recentChats, setRecentChats] = useState([]);
-
-    useEffect(() => {
-        if (user === null) return;
-        getFollowers().then(setRecentChats);
-    }, []);
+    const { recentChats } = useMessaging();
 
     return (
         <div className='fixed right-[5%] flex gap-5 z-[50] transition-all duration-300' style={{ bottom: activeOverlay ? '-276px' : '0' }}>
@@ -35,7 +31,7 @@ const MessagesOverlay = () => {
                         </div>
                     }
                 >
-                    <Chat activeChat={activeChat} />
+                    <Chat activeChat={activeChat} scroll />
                 </OverlayWrapper>
             )}
 
@@ -45,7 +41,7 @@ const MessagesOverlay = () => {
                 activeOverlay={activeOverlay}
                 action={
                     <button style={{ pointerEvents: 'auto' }} onClick={() => setActiveOverlay(prev => !prev)}>
-                        {!activeOverlay ? <HiOutlineChevronUp size={25} /> : <HiOutlineChevronDown size={25} />}
+                        {activeOverlay ? <HiOutlineChevronUp size={25} /> : <HiOutlineChevronDown size={25} />}
                     </button>
                 }
             >

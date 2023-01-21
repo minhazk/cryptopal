@@ -3,26 +3,11 @@ import Chat from '../../components/Chat';
 import DmCard from '../../components/DmCard';
 import Page from '../../components/ui/Page';
 import { BiLeftArrowAlt } from 'react-icons/bi';
+import useMessaging from '../../hooks/useMessaging';
 
 const Messaging = () => {
     const [activeChat, setActiveChat] = useState(null);
-
-    const dummyChats = [
-        {
-            id: 123123,
-            imgUrl: 'https://source.unsplash.com/random/4',
-            name: 'Minhaz Karim',
-            lastMessage: 'Lorem Ipsum is simply dummy text',
-            timestamp: new Date(),
-        },
-        {
-            id: 23423,
-            imgUrl: 'https://source.unsplash.com/random/5',
-            name: 'Mina',
-            lastMessage: 'Lorem Ipsum is simply dummy text',
-            timestamp: new Date(),
-        },
-    ];
+    const { recentChats } = useMessaging();
 
     const chat = [
         {
@@ -52,7 +37,7 @@ const Messaging = () => {
         <Page>
             {!activeChat ? (
                 <div className='flex flex-col'>
-                    {dummyChats.map(chat => (
+                    {recentChats.map(chat => (
                         <DmCard key={chat.id} {...chat} setActiveChat={setActiveChat} />
                     ))}
                 </div>
@@ -64,7 +49,7 @@ const Messaging = () => {
                         </button>
                         <span className='text font-medium'>{activeChat.recipient}</span>
                     </div>
-                    <Chat chat={chat} />
+                    <Chat activeChat={activeChat} />
                 </div>
             )}
         </Page>
