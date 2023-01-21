@@ -5,19 +5,20 @@ import { formatTime } from '../utils/TimeFormatter';
 import ChatForm from './ChatForm';
 import UserIcon from './UserIcon';
 
-const Chat = ({ recipientId }) => {
+const Chat = ({ activeChat }) => {
     const ref = useRef();
     const { user, getChat } = useUserContext();
     const [chat, setChat] = useState([]);
 
+    console.log(activeChat, chat);
+
     useEffect(() => {
         if (user === null) return;
-        return () =>
-            getChat(recipientId).then(chat => {
-                setChat(chat);
-                ref.current.scrollIntoView({ behavior: 'smooth' });
-            });
-    }, [recipientId]);
+        getChat(activeChat.recipientId).then(chat => {
+            setChat(chat);
+            ref.current.scrollIntoView({ behavior: 'smooth' });
+        });
+    }, [activeChat?.recipientId]);
 
     useEffect(() => ref.current.scrollIntoView({ behavior: 'smooth' }), [chat]);
 
@@ -30,7 +31,7 @@ const Chat = ({ recipientId }) => {
                 ))}
                 <div ref={ref} />
             </div>
-            <ChatForm setChat={setChat} recipientId={recipientId} />
+            <ChatForm setChat={setChat} recipientId={activeChat?.recipientId} />
         </>
     );
 };

@@ -56,16 +56,16 @@ const Entry = () => {
     return (
         <div className='flex'>
             <h1 className='absolute top-7 left-1/2 -translate-x-1/2 md:left-14 md:translate-x-0 text-xl font-extrabold text-primary md:text-white tracking-wide'>CRYPTOPAL</h1>
-            <div className='min-h-screen bg-primary w-full hidden md:flex items-center px-2 lg:px-4'>
+            <div className='py-20 min-h-screen bg-primary w-full hidden md:flex items-center px-2 lg:px-4'>
                 <div className='relative'>
                     <div className='w-[85%] lg:w-[65%] ml-12'>
-                        <ThreadCard {...dummyCards[0]} />
+                        <ThreadCard {...dummyCards[0]} disabled />
                     </div>
                     <div className='mx-auto rounded border my-2 w-[90%] lg:w-[70%]'>
-                        <ThreadCard {...dummyCards[1]} />
+                        <ThreadCard {...dummyCards[1]} disabled />
                     </div>
                     <div className='w-[85%] lg:w-[65%] ml-12'>
-                        <ThreadCard {...dummyCards[2]} />
+                        <ThreadCard {...dummyCards[2]} disabled />
                     </div>
                 </div>
             </div>

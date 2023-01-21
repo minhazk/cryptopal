@@ -11,7 +11,7 @@ import { useThreadContext } from '../context/ThreadContext';
 import { tierColours } from '../utils/colours';
 import { BsBookmark, BsBookmarkDash } from 'react-icons/bs';
 
-const ThreadCard = ({ id, tags, title, body, author, authorId, timestamp, gold, silver, bronze, vote, short }) => {
+const ThreadCard = ({ id, tags, title, body, author, authorId, timestamp, gold, silver, bronze, vote, short, disabled }) => {
     const { user } = useUserContext();
     const [editingThread, setEditingThread] = useState(false);
     const [bodyContent, setBodyContent] = useState(body);
@@ -57,12 +57,13 @@ const ThreadCard = ({ id, tags, title, body, author, authorId, timestamp, gold, 
         saveThread(id).then(() => setSaved(true));
     }
 
-    function handleUnsaveThread() {
+    function handleUnSaveThread() {
         unSaveThread(id).then(() => setSaved(false));
     }
 
     return (
-        <div className='bg-white rounded shadow px-3 py-4 flex gap-3'>
+        <div className='relative bg-white rounded shadow px-3 py-4 flex gap-3'>
+            {disabled && <div className='absolute inset-0' />}
             <div className='flex flex-col gap-1 items-center pt-1'>
                 <button
                     onClick={e => {
@@ -140,7 +141,7 @@ const ThreadCard = ({ id, tags, title, body, author, authorId, timestamp, gold, 
                                     <BsBookmark />
                                 </button>
                             ) : (
-                                <button onClick={handleUnsaveThread} className='flex gap-2 items-center hover:text-red-500'>
+                                <button onClick={handleUnSaveThread} className='flex gap-2 items-center hover:text-red-500'>
                                     Unsave
                                     <BsBookmarkDash />
                                 </button>

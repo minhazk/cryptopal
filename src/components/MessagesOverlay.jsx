@@ -28,14 +28,14 @@ const MessagesOverlay = () => {
                     recipientId={activeChat.recipientId}
                     action={
                         <div className='flex items-center gap-2'>
-                            <button onClick={() => setActiveOverlay(prev => !prev)}>{activeOverlay ? <FaRegWindowMinimize /> : <FiMaximize2 size={20} />}</button>
+                            <button onClick={() => setActiveOverlay(prev => !prev)}>{!activeOverlay ? <FaRegWindowMinimize /> : <FiMaximize2 size={20} />}</button>
                             <button onClick={() => setActiveChat(null)}>
                                 <IoMdClose size={25} />
                             </button>
                         </div>
                     }
                 >
-                    <Chat recipientId={activeChat.recipientId} />
+                    <Chat activeChat={activeChat} />
                 </OverlayWrapper>
             )}
 
