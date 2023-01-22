@@ -112,7 +112,7 @@ const Profile = () => {
             ) : (
                 <Carousel
                     cards={[...achievements.map(achievement => <AchievementCard key={achievement.id} {...achievement} />), isOwner ? <UploadAchievement key={-Infinity} /> : null]}
-                    size={achievements.length}
+                    size={achievements.length + 1}
                 />
             )}
         </Page>

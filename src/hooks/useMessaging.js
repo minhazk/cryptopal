@@ -8,7 +8,7 @@ function useMessaging() {
     useEffect(() => {
         if (user === null) return;
         getFollowers().then(setRecentChats);
-    }, []);
+    }, [user]);
 
     return { recentChats };
 }
