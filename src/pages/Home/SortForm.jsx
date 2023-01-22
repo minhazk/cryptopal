@@ -27,7 +27,7 @@ const SortForm = ({ setThreads }) => {
                 <p className='text-xs text-gray-400'>Sort</p>
             </button>
             {isSelecting && (
-                <div className='absolute right-0 top-full mt-4 shadow-md text-xs bg-white w-fit flex flex-col rounded-lg border border-primary overflow-hidden'>
+                <div className='absolute right-0 top-full mt-4 shadow-md text-xs bg-white w-fit flex flex-col rounded-lg border border-primary overflow-hidden z-50'>
                     <button onClick={() => handleSelect('High')} className='whitespace-nowrap px-7 py-2 hover:bg-gray-200 transition-colors'>
                         Top Rated
                     </button>
