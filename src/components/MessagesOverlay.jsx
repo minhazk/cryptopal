@@ -11,7 +11,7 @@ import useMessaging from '../hooks/useMessaging';
 
 const MessagesOverlay = () => {
     const { user } = useUserContext();
-    const [activeOverlay, setActiveOverlay] = useState(false);
+    const [activeOverlay, setActiveOverlay] = useState(true);
     const [activeChat, setActiveChat] = useState(null);
     const { recentChats } = useMessaging();
 
