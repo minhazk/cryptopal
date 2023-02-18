@@ -8,11 +8,11 @@ const SortForm = ({ setThreads }) => {
         setThreads(prev => {
             switch (type) {
                 case 'High':
-                    return prev.sort((a, b) => a.bronze + a.silver + a.gold - (b.bronze + b.silver + b.gold));
+                    return [...prev.sort((a, b) => b.bronze + b.silver + b.gold - (a.bronze + a.silver + a.gold))];
                 case 'Old to New':
-                    return prev.sort((a, b) => a.timestamp - b.timestamp);
+                    return [...prev.sort((a, b) => a.timestamp - b.timestamp)];
                 case 'New to Old':
-                    return prev.sort((a, b) => b.timestamp - a.timestamp);
+                    return [...prev.sort((a, b) => b.timestamp - a.timestamp)];
                 default:
                     return prev;
             }
