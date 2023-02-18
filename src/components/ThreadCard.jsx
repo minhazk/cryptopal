@@ -104,7 +104,7 @@ const ThreadCard = ({ id, tags, title, body, author, authorId, timestamp, gold, 
                     <textarea
                         ref={bodyRef}
                         autoFocus
-                        className='w-full max-h-12 resize-none text-xs mt-1 border rounded outline-none transition-all duration-300 focus:shadow-[0_0_0_.175rem] focus:shadow-blue-300 focus:border-primary disabled:bg-transparent py-1 px-2'
+                        className='w-full max-h-96 h-56 resize-none text-xs mt-1 border rounded outline-none transition-all duration-300 focus:shadow-[0_0_0_.175rem] focus:shadow-blue-300 focus:border-primary disabled:bg-transparent py-1 px-2'
                     >
                         {bodyContent}
                     </textarea>
