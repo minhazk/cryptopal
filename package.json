@@ -6,7 +6,8 @@
     "scripts": {
         "dev": "vite",
         "build": "vite build",
-        "preview": "vite preview"
+        "preview": "vite preview",
+        "test": "jest --watchAll"
     },
     "dependencies": {
         "dayjs": "^1.11.7",
@@ -19,11 +20,14 @@
         "uuid": "^9.0.0"
     },
     "devDependencies": {
+        "@testing-library/react": "^14.0.0",
         "@types/react": "^18.0.26",
         "@types/react-dom": "^18.0.9",
         "@vitejs/plugin-react": "^3.0.0",
         "autoprefixer": "^10.4.13",
+        "babel": "^6.23.0",
         "dotenv": "^16.0.3",
+        "jest": "^29.5.0",
         "postcss": "^8.4.20",
         "react-error-overlay": "^6.0.9",
         "tailwindcss": "^3.2.4",

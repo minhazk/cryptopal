@@ -42,6 +42,7 @@ const CreateForm = ({ setThreads }) => {
                     className='w-full text-sm py-2 px-3 rounded outline-none transition-shadow duration-300 focus:shadow-[0_0_0_.175rem] focus:shadow-blue-300 focus:border-primary'
                     style={{ paddingLeft: title ? '48px' : '12px' }}
                     placeholder='Ask something'
+                    testID='title'
                 />
                 <label htmlFor='titleInput' className='absolute right-2 top-1/2 -translate-y-1/2'>
                     <AiOutlinePlus size={25} />
@@ -55,6 +56,7 @@ const CreateForm = ({ setThreads }) => {
                         onChange={e => setBody(e.target.value)}
                         className='text-sm w-full resize-x-none h-20 max-h-24 py-2 px-2 border border-gray-200 rounded outline-none transition-shadow duration-300 focus:shadow-[0_0_0_.175rem] focus:shadow-blue-300 focus:border-primary'
                         placeholder='Type here'
+                        testID='body'
                     ></textarea>
 
                     <h4 className='font-medium text-sm'>Tags</h4>
@@ -73,7 +75,7 @@ const CreateForm = ({ setThreads }) => {
                             >
                                 Cancel
                             </button>
-                            <Button onClick={handleCreateThread} label='Post'>
+                            <Button onClick={handleCreateThread} label='Post' testID='createBtn'>
                                 Post
                             </Button>
                         </div>

@@ -1,8 +1,8 @@
 import React from 'react';
 
-const Button = ({ label, onClick, type = 'button' }) => {
+const Button = ({ label, onClick, type = 'button', testID = null }) => {
     return (
-        <button onClick={onClick} type={type} className='bg-primary text-white text-sm py-1 px-3 rounded' style={{ fontSize: 'inherit' }}>
+        <button onClick={onClick} type={type} className='bg-primary text-white text-sm py-1 px-3 rounded' testID={testID} style={{ fontSize: 'inherit' }}>
             {label}
         </button>
     );
