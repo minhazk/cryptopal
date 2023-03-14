@@ -195,13 +195,15 @@ const UserProvider = ({ children }) => {
     async function createAchievement(file) {
         const id = uuidv4();
         const imgUrl = await uploadImage(file, id);
-        await setDoc(doc(db, 'achievement', id), {
+        const achievement = {
             bronze: 0,
             silver: 0,
             gold: 0,
             userId: user.id,
             imgUrl,
-        });
+        };
+        await setDoc(doc(db, 'achievement', id), achievement);
+        return achievement;
     }
 
     async function getFollowers() {

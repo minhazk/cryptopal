@@ -21,6 +21,12 @@ const Carousel = ({ cards, size }) => {
         return () => window.removeEventListener('resize', resize);
     }, []);
 
+    useEffect(() => {
+        setOptions(prev => {
+            return { ...prev, numOfSlides: Math.ceil(size / cardsPerSlide) };
+        });
+    }, [cards]);
+
     const handleNextPage = () => {
         if (Math.abs(xOffset) === options.cardsPerSlide) return;
         setXOffset(prev => prev - 1);

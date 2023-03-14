@@ -11,7 +11,7 @@ const InputGroup = ({ label, id, type, placeholder, setValue, testID }) => {
                 type={type}
                 placeholder={placeholder}
                 className='text-xs py-2 px-2 rounded border border-gray-300 outline-none transition-shadow duration-300 focus:shadow-[0_0_0_.175rem] focus:shadow-blue-300 focus:border-primary'
-                testID={testID}
+                data-testid={testID}
                 required
             />
         </div>

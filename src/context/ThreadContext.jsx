@@ -240,6 +240,7 @@ const ThreadProvider = ({ children }) => {
         await updateDoc(docRef, { [userRank]: alteration });
 
         return { postId, userRank, alteration, vote: deletedVote ? null : variation };
+        return { postId, userRank, alteration: 12, vote: null };
     }
 
     async function updatePost(id, type, body) {

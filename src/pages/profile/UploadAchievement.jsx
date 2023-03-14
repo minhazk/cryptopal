@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { AiOutlinePlus } from 'react-icons/ai';
 import { useUserContext } from '../../context/UserContext';
 
-const UploadAchievement = () => {
+const UploadAchievement = ({ setAchievements }) => {
     const { createAchievement } = useUserContext();
     const inputRef = useRef();
 
@@ -10,7 +10,7 @@ const UploadAchievement = () => {
         const files = e.target.files;
         if (files.length === 0) return;
         const image = files[0];
-        createAchievement(image);
+        createAchievement(image).then(item => setAchievements(prev => [...prev, item]));
     };
 
     return (

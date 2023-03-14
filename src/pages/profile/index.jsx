@@ -111,7 +111,10 @@ const Profile = () => {
                 </div>
             ) : (
                 <Carousel
-                    cards={[...achievements.map(achievement => <AchievementCard key={achievement.id} {...achievement} />), isOwner ? <UploadAchievement key={-Infinity} /> : null]}
+                    cards={[
+                        ...achievements.map(achievement => <AchievementCard key={achievement.id} {...achievement} />),
+                        isOwner ? <UploadAchievement key={-Infinity} setAchievements={setAchievements} /> : null,
+                    ]}
                     size={achievements.length + 1}
                 />
             )}

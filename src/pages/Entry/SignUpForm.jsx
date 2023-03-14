@@ -19,12 +19,6 @@ const SignUpForm = ({ setSigningUp }) => {
             .catch(err => alert('There was an error creating your account: ' + err));
     };
 
-    const handleSignIn = () => {
-        signInUser(email, password)
-            .then(() => navigate('/home'))
-            .catch(err => alert('There was an error logging in: ' + err));
-    };
-
     return (
         <div className='min-h-screen flex items-center w-full px-5 md:px-10 py-16'>
             <div className='flex flex-col gap-4 w-full max-w-sm mx-auto'>
