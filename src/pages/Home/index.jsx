@@ -19,7 +19,7 @@ const Home = ({ filter }) => {
     useEffect(() => {
         if (user === null) return;
         getAllThreads(filter).then(threads => {
-            setThreads(threads);
+            setThreads(threads.sort((a, b) => b.timestamp - a.timestamp));
             setLoading(false);
         });
     }, [user, filter]);

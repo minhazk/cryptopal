@@ -26,7 +26,7 @@ const CreateForm = ({ setThreads }) => {
     };
 
     function createLocalThread(thread) {
-        setThreads(prev => [...prev, thread]);
+        setThreads(prev => [thread, ...prev]);
     }
 
     return (
