@@ -32,7 +32,6 @@ const UserProvider = ({ children }) => {
     const signInUser = async (email, password) => {
         try {
             await signInWithEmailAndPassword(auth, email, password);
-            if (user) navigate('/home');
         } catch (e) {
             alert('Failed to sign in');
         }
@@ -41,7 +40,6 @@ const UserProvider = ({ children }) => {
     const signInWithGoogle = async () => {
         try {
             await signInWithPopup(auth, new GoogleAuthProvider());
-            if (user) navigate('/home');
         } catch (e) {
             alert('Failed to sign in');
         }
@@ -121,7 +119,7 @@ const UserProvider = ({ children }) => {
                     setUser({ id: user.id, displayName: user.displayName, email: user.email, photoUrl: user.photoURL, points: user.points });
                 }
             });
-    }, []);
+    }, [signInUser, signInWithGoogle]);
 
     function getUserRank() {
         return user.points < 500 ? 'bronze' : user.points < 1000 ? 'silver' : 'gold';
