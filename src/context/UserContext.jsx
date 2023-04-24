@@ -25,12 +25,27 @@ const UserProvider = ({ children }) => {
                     photoURL: user.photoURL,
                     points: 0,
                 });
+                navigate('/home?signUp=true');
             })
             .catch(err => alert('There was an error creating your account: ' + err));
 
-    const signInUser = (email, password) => signInWithEmailAndPassword(auth, email, password);
+    const signInUser = async (email, password) => {
+        try {
+            await signInWithEmailAndPassword(auth, email, password);
+            if (user) navigate('/home');
+        } catch (e) {
+            alert('Failed to sign in');
+        }
+    };
 
-    const signInWithGoogle = () => signInWithPopup(auth, new GoogleAuthProvider()).then(() => navigate('/home'));
+    const signInWithGoogle = async () => {
+        try {
+            await signInWithPopup(auth, new GoogleAuthProvider());
+            if (user) navigate('/home');
+        } catch (e) {
+            alert('Failed to sign in');
+        }
+    };
 
     const logout = () => {
         auth.signOut().then(() => {

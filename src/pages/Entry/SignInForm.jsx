@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Button from '../../components/ui/Button';
 import { useUserContext } from '../../context/UserContext';
 import InputGroup from './InputGroup';
@@ -8,12 +7,10 @@ const SignInForm = ({ setSigningUp }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const { signInUser, signInWithGoogle } = useUserContext();
-    const navigate = useNavigate();
 
     const handleSignIn = () => {
-        signInUser(email, password)
-            .then(() => navigate('/home'))
-            .catch(err => alert('There was an error logging in: ' + err));
+        if (email === '' || password === '') return alert('Please fill in all fields');
+        signInUser(email, password);
     };
 
     return (

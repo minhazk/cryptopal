@@ -13,10 +13,9 @@ const SignUpForm = ({ setSigningUp }) => {
     const navigate = useNavigate();
 
     const handleSignUp = () => {
+        if (name === '' || email === '' || password === '' || rePassword === '') return alert('Please fill in all fields');
         if (password !== rePassword) return alert('Passwords do not match!');
-        signUpUser(name, email, password)
-            .then(() => navigate('/home?signUp=true'))
-            .catch(err => alert('There was an error creating your account: ' + err));
+        signUpUser(name, email, password);
     };
 
     return (
