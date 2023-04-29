@@ -101,25 +101,24 @@ const UserProvider = ({ children }) => {
     }
 
     useEffect(() => {
-        return () =>
-            auth.onAuthStateChanged(async authUser => {
-                if (authUser) {
-                    const docRef = doc(db, 'user', authUser.uid);
-                    const docSnap = await getDoc(docRef);
-                    if (!docSnap.exists()) {
-                        await setDoc(doc(db, 'user', authUser.uid), {
-                            id: authUser.uid,
-                            displayName: authUser.displayName,
-                            email: authUser.email,
-                            createdAt: authUser.metadata.createdAt,
-                            photoURL: authUser.photoURL,
-                            points: 0,
-                        });
-                    }
-                    const user = docSnap.data();
-                    setUser({ id: user.id, displayName: user.displayName, email: user.email, photoUrl: user.photoURL, points: user.points });
+        auth.onAuthStateChanged(async authUser => {
+            if (authUser) {
+                const docRef = doc(db, 'user', authUser.uid);
+                const docSnap = await getDoc(docRef);
+                if (!docSnap.exists()) {
+                    await setDoc(doc(db, 'user', authUser.uid), {
+                        id: authUser.uid,
+                        displayName: authUser.displayName,
+                        email: authUser.email,
+                        createdAt: authUser.metadata.createdAt,
+                        photoURL: authUser.photoURL,
+                        points: 0,
+                    });
                 }
-            });
+                const user = docSnap.data();
+                setUser({ id: user.id, displayName: user.displayName, email: user.email, photoUrl: user.photoURL, points: user.points });
+            }
+        });
     }, []);
 
     function getUserRank() {
