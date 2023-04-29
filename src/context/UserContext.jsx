@@ -25,6 +25,7 @@ const UserProvider = ({ children }) => {
                     photoURL: user.photoURL,
                     points: 0,
                 });
+                set;
                 navigate('/home?signUp=true');
             })
             .catch(err => alert('There was an error creating your account: ' + err));
@@ -53,6 +54,7 @@ const UserProvider = ({ children }) => {
     };
 
     const updateUserTags = async tagIds => {
+        console.log(user);
         try {
             const docRef = doc(db, 'user_tag', user.id);
             await updateDoc(docRef, {
@@ -119,7 +121,7 @@ const UserProvider = ({ children }) => {
                     setUser({ id: user.id, displayName: user.displayName, email: user.email, photoUrl: user.photoURL, points: user.points });
                 }
             });
-    }, [signInUser, signInWithGoogle]);
+    }, []);
 
     function getUserRank() {
         return user.points < 500 ? 'bronze' : user.points < 1000 ? 'silver' : 'gold';
