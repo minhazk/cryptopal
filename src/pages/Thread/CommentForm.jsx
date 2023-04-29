@@ -15,7 +15,7 @@ const CommentForm = ({ autoFocus = false, setReplying, parentThreadId, parentCom
 
     function createLocalComment(comment) {
         setComments(prev => [...prev, comment]);
-        setValue('');
+        setValue(null);
     }
 
     return (

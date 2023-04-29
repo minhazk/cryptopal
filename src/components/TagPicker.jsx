@@ -12,16 +12,18 @@ const TagPicker = ({ tags = [], action, closePopup, allowCreate }) => {
     const { createTag } = useThreadContext();
     const [selected, setSelected] = useState(tags);
     const [allTags, setAllTags] = useState([]);
-    const createTagInputRef = useRef();
+    const [tagInput, setTagInput] = useState('');
 
     useEffect(() => {
         getAllTags().then(setAllTags);
     }, []);
 
     async function handleCreateTag() {
-        const value = createTagInputRef.current.value;
-        if (value === '' || value === null) return;
-        createTag(value.toUpperCase()).then(tag => setSelected(prev => [...prev, tag]));
+        if (tagInput === '' || tagInput === null) return;
+        createTag(tagInput).then(tag => {
+            setTagInput('');
+            setSelected(prev => [...prev, tag]);
+        });
     }
 
     return (
@@ -61,9 +63,10 @@ const TagPicker = ({ tags = [], action, closePopup, allowCreate }) => {
                     {allowCreate && (
                         <div className='relative'>
                             <input
-                                ref={createTagInputRef}
+                                value={tagInput}
+                                onChange={e => setTagInput(e.target.value)}
                                 placeholder='Enter new'
-                                className='text-xs py-[5px] pl-2 w-28 rounded outline-none transition-shadow duration-300 focus:shadow-[0_0_0_.175rem] focus:shadow-blue-300 border-2 uppercase border-primary pr-7'
+                                className='text-xs py-[5px] pl-2 w-28 rounded outline-none transition-shadow duration-300 focus:shadow-[0_0_0_.175rem] focus:shadow-blue-300 border-2 border-primary pr-7'
                             />
                             <button onClick={handleCreateTag} className='absolute right-0 top-1/2 -translate-y-1/2 p-1 mr-1'>
                                 <BsArrowReturnLeft size={15} />
