@@ -25,7 +25,6 @@ const UserProvider = ({ children }) => {
                     photoURL: user.photoURL,
                     points: 0,
                 });
-                set;
                 navigate('/home?signUp=true');
             })
             .catch(err => alert('There was an error creating your account: ' + err));
