@@ -105,7 +105,7 @@ const Profile = () => {
             )}
 
             <h2 className='font-medium lg:text-md'>Achievements</h2>
-            {achievements.length === 0 ? (
+            {achievements.length === 0 && !isOwner ? (
                 <div className='flex items-center justify-center text-sm text-gray-400 h-16'>
                     <p>This has user has not posted any achievements yet</p>
                 </div>

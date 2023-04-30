@@ -18,7 +18,9 @@ const Header = ({ setBurgerOpen, burgerOpen, profileOpen, setProfileOpen, hideSi
                 CRYPTOPAL
             </Link>
             <div className='ml-auto flex items-center gap-2'>
-                <Link className='hidden md:block text-sm font-medium mt-1'>{user?.displayName}</Link>
+                <Link to={`/profile/${user?.id}`} className='hidden md:block text-sm font-medium mt-1'>
+                    {user?.displayName}
+                </Link>
                 <IconContext.Provider value={{ size: '21px' }}>
                     <Link to='/messaging'>
                         <AiOutlineMessage className='md:hidden' />

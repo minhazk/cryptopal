@@ -89,7 +89,7 @@ const ThreadCard = ({ id, tags, title, body, author, authorId, timestamp, gold, 
 
             <div className='w-full'>
                 {tags && tags.length > 0 && (
-                    <div className='flex gap-2 mb-3'>
+                    <div className='flex flex-wrap gap-2 mb-3'>
                         <TagList tags={tags} />
                     </div>
                 )}
