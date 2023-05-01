@@ -38,7 +38,7 @@ const Profile = () => {
         if (loggedInUser === null) return;
         setIsOwner(loggedInUser?.id === id);
         isFollowingUser(id).then(setIsFollowing);
-    }, [loggedInUser]);
+    }, [loggedInUser, id]);
 
     useEffect(() => {
         getUserById(id).then(setUser);
@@ -46,7 +46,15 @@ const Profile = () => {
         getUserAchievements(id).then(setAchievements);
         getUserComments(id).then(setRecentComments);
         getUserTags(id).then(setTags);
-    }, []);
+    }, [id]);
+
+    // useEffect(() => {
+    //     getUserById(id).then(setUser);
+    //     getUserStats(id).then(setUserStats);
+    //     getUserAchievements(id).then(setAchievements);
+    //     getUserComments(id).then(setRecentComments);
+    //     getUserTags(id).then(setTags);
+    // }, [id]);
 
     useEffect(() => {
         getUserStats(id).then(setUserStats);
