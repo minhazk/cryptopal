@@ -40,6 +40,7 @@ const UserProvider = ({ children }) => {
     const signInWithGoogle = async () => {
         try {
             await signInWithPopup(auth, new GoogleAuthProvider());
+            navigate('/home');
         } catch (e) {
             alert('Failed to sign in');
         }
@@ -53,7 +54,6 @@ const UserProvider = ({ children }) => {
     };
 
     const updateUserTags = async tagIds => {
-        console.log(user);
         try {
             const docRef = doc(db, 'user_tag', user.id);
             await updateDoc(docRef, {
