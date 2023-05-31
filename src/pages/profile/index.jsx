@@ -48,17 +48,9 @@ const Profile = () => {
         getUserTags(id).then(setTags);
     }, [id]);
 
-    // useEffect(() => {
-    //     getUserById(id).then(setUser);
-    //     getUserStats(id).then(setUserStats);
-    //     getUserAchievements(id).then(setAchievements);
-    //     getUserComments(id).then(setRecentComments);
-    //     getUserTags(id).then(setTags);
-    // }, [id]);
-
     useEffect(() => {
         getUserStats(id).then(setUserStats);
-    }, [isFollowing]);
+    }, [isFollowing, id]);
 
     return (
         <Page hideSideProfile>
