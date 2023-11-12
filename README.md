@@ -15,12 +15,6 @@
 
 Cryptopal is a web application built using React Vite and Firebase, designed to provide a platform for novice cryptocurrency traders to seek advice, share experiences, and connect with other traders. The website offers a welcoming and interactive space where cryptocurrency enthusiasts can interact and learn from one another.
 
-## Technologies Used
-
-- React Vite
-- Firebase
-- Firestore
-
 ## Features
 
 - **User Posts**: Users can create and share posts, sharing their insights, questions, and experiences related to cryptocurrency trading. This feature encourages discussions and knowledge sharing within the community.
@@ -35,6 +29,11 @@ Cryptopal is a web application built using React Vite and Firebase, designed to 
 
 - **User Profiles**: Each user has a profile where they can showcase their achievements, including the points they've earned and their rank within the community. User profiles also allow for customization and personalization, such as uploading images and sharing additional information.
 
+## Technologies Used
+
+- React Vite
+- Firebase
+- Firestore
 
 ## Getting Started
 
