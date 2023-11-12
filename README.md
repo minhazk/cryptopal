@@ -87,3 +87,8 @@ Please replace the placeholders (e.g., your_firebase_api_key) with your actual c
     ```
 
 This will launch the project locally, and you can access it in your web browser at http://localhost:3000.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE.md). See the [LICENSE.md](LICENSE.md) file for the full text of the license.
+
